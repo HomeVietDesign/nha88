@@ -1,0 +1,22 @@
+.column-bank {
+	width: 320px;
+}
+.image.column-image img {
+	max-width: 100%;
+	height: auto;
+}
+/*
+.inline-edit-date,
+.inline-edit-date + br + .inline-edit-group,
+.inline-edit-status {
+	display: none !important;
+}
+*/
+.actions.column-actions button {
+	margin: 3px;
+}
+.misc-pub-section.misc-pub-curtime,
+.misc-pub-section.misc-pub-visibility,
+.misc-pub-section.misc-pub-post-status {
+	display: none;
+}

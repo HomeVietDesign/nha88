@@ -1,0 +1,69 @@
+.fw-shortcode-owlcarousel,
+.fw-shortcode-owlcarousel .slide {
+	height: calc(100vh - 56px - 55px);
+}
+body.admin-bar .fw-shortcode-owlcarousel,
+body.admin-bar .fw-shortcode-owlcarousel .slide {
+	height: calc(100vh - 56px - var(--wp-admin--admin-bar--height) - 55px);
+}
+.fw-shortcode-owlcarousel .slide img {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: center center;
+}
+.fw-shortcode-owlcarousel .caption h1,
+.fw-shortcode-owlcarousel .caption h2,
+.fw-shortcode-owlcarousel .caption h3,
+.fw-shortcode-owlcarousel .caption h4,
+.fw-shortcode-owlcarousel .caption h5,
+.fw-shortcode-owlcarousel .caption h6 {
+	line-height: 1.6;
+}
+.fw-shortcode-owlcarousel .caption {
+	position: absolute;
+	bottom: 40px;
+	z-index: 2;
+	left: 50%;
+	right: unset;
+	transform: translateX(-50%);
+	padding: 1.25rem;
+	background: rgba(0, 0, 0, 0.4);
+	width: 100%;
+}
+.fw-shortcode-owlcarousel .caption p:last-child {
+	margin-bottom: 0;
+}
+.fw-shortcode-owlcarousel .owl-nav {
+	position: absolute;
+	left: 10px;
+	bottom: 7px;
+	display: flex;
+	align-items: center;
+}
+.fw-shortcode-owlcarousel .owl-carousel .owl-nav button.owl-next, 
+.fw-shortcode-owlcarousel .owl-carousel .owl-nav button.owl-prev {
+	display: flex;
+	width: 32px;
+	height: 32px;
+	align-items: center;
+	justify-content: center;
+	color: #fff;
+	background-color: rgba(0, 0, 0, .3);
+	margin-right: 10px;
+}
+@media (min-width: 768px) {
+	.fw-shortcode-owlcarousel,
+	.fw-shortcode-owlcarousel .slide {
+		height: calc(100vh - 56px);
+	}
+	body.admin-bar .fw-shortcode-owlcarousel,
+	body.admin-bar .fw-shortcode-owlcarousel .slide {
+		height: calc(100vh - 56px - var(--wp-admin--admin-bar--height));
+	}
+	.fw-shortcode-owlcarousel .caption {
+		bottom: 100px;
+		width: auto;
+	}
+}

@@ -1,0 +1,11 @@
+#newcustomer_parent,
+#newproduct_file_type_parent,
+#newproduct_price_parent {
+	display: none;
+}
+.actions.column-actions label {
+	display: block;
+	padding: 5px;
+	border: rgba(0, 0, 0, .1) 1px solid;
+	margin-bottom: 3px;
+}

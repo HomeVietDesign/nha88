@@ -1,0 +1,64 @@
+.fw-shortcode-carousel .carousel-item {
+	height: calc(100vh - 56px - 55px);
+}
+body.admin-bar .fw-shortcode-carousel .carousel-item {
+	height: calc(100vh - 56px - var(--wp-admin--admin-bar--height) - 55px);
+}
+.fw-shortcode-carousel .carousel-item img {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: center center;
+}
+.fw-shortcode-carousel .carousel-caption h1,
+.fw-shortcode-carousel .carousel-caption h2,
+.fw-shortcode-carousel .carousel-caption h3,
+.fw-shortcode-carousel .carousel-caption h4,
+.fw-shortcode-carousel .carousel-caption h5,
+.fw-shortcode-carousel .carousel-caption h6 {
+	line-height: 1.6;
+}
+.fw-shortcode-carousel .carousel-caption {
+	bottom: 40px;
+	z-index: 2;
+	left: 50%;
+	right: unset;
+	transform: translateX(-50%);
+	padding-left: 1.25rem;
+	padding-right: 1.25rem;
+	background: rgba(0, 0, 0, 0.4);
+	width: 100%;
+}
+.fw-shortcode-carousel .carousel-caption p:last-child {
+	margin-bottom: 0;
+}
+.fw-shortcode-carousel .carousel-indicators {
+	margin-left: 1%;
+	margin-right: 0;
+	right: unset;
+	margin-bottom: unset;
+}
+.fw-shortcode-carousel .carousel-indicators [data-bs-target] {
+	height: 30px;
+}
+@media (min-width: 768px) {
+	.fw-shortcode-carousel .carousel-item {
+		height: calc(100vh - 56px);
+	}
+	body.admin-bar .fw-shortcode-carousel .carousel-item {
+		height: calc(100vh - 56px - var(--wp-admin--admin-bar--height));
+	}
+	.fw-shortcode-carousel .carousel-caption {
+		bottom: 100px;
+		width: auto;
+	}
+	.fw-shortcode-carousel .carousel-control-next,
+	.fw-shortcode-carousel .carousel-control-prev {
+		opacity: 0;
+	}
+	.fw-shortcode-carousel:hover .carousel-control-next,
+	.fw-shortcode-carousel:hover .carousel-control-prev {
+		opacity: 1;
+	}
+}
