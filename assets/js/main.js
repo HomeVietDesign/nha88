@@ -66,11 +66,9 @@ window.addEventListener('DOMContentLoaded', function(){
 			
 			$button.prop('disabled', true);
 
-			// formData.append('token', token);
-			// formData.append('url', window.location.href);
+			data.push({name:'token', value:token});
+			data.push({name:'url', value:window.location.href});
 
-			data.push({'token':token,'url':window.location.href});
-			
 			$.ajax({
 				url: theme.ajax_url+'?action=request',
 				type: 'POST',
@@ -101,7 +99,7 @@ window.addEventListener('DOMContentLoaded', function(){
 					$form.trigger('reset');
 				}
 			});
-
+		
 		}
 
 		$('#frm-request').on('submit', function(event){
@@ -111,7 +109,7 @@ window.addEventListener('DOMContentLoaded', function(){
 
 			if(typeof grecaptcha != 'undefined') {
 				grecaptcha.ready(function() {
-					grecaptcha.execute(theme.sitekey, {action: 'contact'}).then(function(token) {
+					grecaptcha.execute(theme.sitekey, {action: 'request'}).then(function(token) {
 						submit_request(token);
 					}); // recaptcha execute
 				}); // recaptcha ready
