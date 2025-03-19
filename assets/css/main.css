@@ -55,7 +55,9 @@
 .product-qrbank img {
 	width: 80px;
 }
-
+.product-dimension {
+	text-shadow: 1px 1px 6px rgba(0, 0, 0, .8);
+}
 /*------------------------------------*/
 html {
 	-webkit-text-size-adjust: none;

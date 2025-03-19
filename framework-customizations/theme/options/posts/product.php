@@ -42,12 +42,14 @@ $options = [
 				'label' => 'Rộng mặt tiền',
 				'desc'  => 'm',
 				'type'  => 'numeric',
+				'integer'  => false,
 				//'value' => 0
 			),
 			'depth' => array(
 				'label' => 'Chiều sâu',
 				'desc'  => 'm',
 				'type'  => 'numeric',
+				'integer'  => false,
 				//'value' => 0
 			),
         	'total_area' => array(
