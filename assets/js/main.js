@@ -4,6 +4,123 @@ window.addEventListener('DOMContentLoaded', function(){
 
 	jQuery(function($){
 		// products
+		function check_input_phone_number(p) {
+			const patt = /^(\+?\d{1,3}[-.\s]?)?(\(?\d{3}\)?[-.\s]?)?\d{3}[-.\s]?\d{4}$/;
+			return patt.test(p);
+		}
+
+		$('#request-popup').on('show.bs.modal', function (event) {
+			let $modal = $(this),
+				$button = $(event.relatedTarget),
+				$form = $('#frm-request'),
+				id = parseInt($button.data('id'));
+			
+			$('#request-product-id').val(id);
+			$('#request-product-image').html('<img src="'+$button.data('src')+'">');
+			
+		}).on('hidden.bs.modal', function (e) {
+
+			$('#request-product-id').val('');
+			$('#request-product-image').html('');
+
+
+		});
+
+		function checkRequestFormValidity() {
+			let valid = true;
+			$('#request-popup').find('input').each(function(index, el){
+				let $el = $(el);
+				switch(el.type) {
+					case 'text':
+						if(el.validity.valueMissing || el.validity.tooLong) {
+							valid = false;
+						}
+						break;
+					case 'tel':
+						if(el.validity.valueMissing || !check_input_phone_number(el.value)) {
+							valid = false;
+						}
+						break;
+				}
+
+			});
+
+			return valid;
+		}
+
+		$(document).on('input', '#request-popup input', function() {
+			if(checkRequestFormValidity()) {
+				$('#request-submit').prop('disabled', false);
+			} else {
+				$('#request-submit').prop('disabled', true);
+			}
+		});
+
+		let ajax_request = null;
+		function submit_request(token='') {
+			let $form = $('#frm-request')
+				,data = $form.serializeArray()
+				,$button = $form.find('[type="submit"]')
+				,$response = $('#request-response')
+				;
+			
+			$button.prop('disabled', true);
+
+			// formData.append('token', token);
+			// formData.append('url', window.location.href);
+
+			data.push({'token':token,'url':window.location.href});
+			
+			$.ajax({
+				url: theme.ajax_url+'?action=request',
+				type: 'POST',
+				data: data,
+				dataType: 'json',
+				beforeSend: function() {
+					$response.html('<p class="text-primary">Đang gửi yêu cầu...</p>');
+				},
+				success: function(response) {
+					const eventRequest = new CustomEvent('request', {
+						bubbles: true,
+						detail: { id:response.data.id, name:response.data.name, content_type:response.data.content_type, phone:response.data.phone, fb_pxl_code:response.fb_pxl_code }
+					});
+
+					if(response['code']==1) {
+						event.target.dispatchEvent(eventRequest);
+					} else {
+						$button.prop('disabled', false);
+					}
+
+					$response.html(response['msg']);
+				},
+				error: function(xhr) {
+					$response.html('<p class="text-danger">Có lỗi xảy ra. Xin vui lòng thử lại.</p>');
+					$button.prop('disabled', false);
+				},
+				complete: function() {
+					$form.trigger('reset');
+				}
+			});
+
+		}
+
+		$('#frm-request').on('submit', function(event){
+			event.preventDefault();
+			let $form = $(this);
+			$form.find('[type="submit"]').prop('disabled', true);
+
+			if(typeof grecaptcha != 'undefined') {
+				grecaptcha.ready(function() {
+					grecaptcha.execute(theme.sitekey, {action: 'contact'}).then(function(token) {
+						submit_request(token);
+					}); // recaptcha execute
+				}); // recaptcha ready
+			} else {
+				submit_request('');
+			}
+
+			return false;
+		});
 
 		$(document).on('click', '.floor_plan_button, .interior_button', function(e){
 			let pswp = new PhotoSwipe({
@@ -265,11 +382,6 @@ window.addEventListener('DOMContentLoaded', function(){
 				setCookie('popped_popup_content', 1, 1);
 			}, 1000*parseInt(theme.popup_content_timeout));
 			
-		}
-
-		function check_input_phone_number(p) {
-			const patt = /^(\+?\d{1,3}[-.\s]?)?(\(?\d{3}\)?[-.\s]?)?\d{3}[-.\s]?\d{4}$/;
-			return patt.test(p);
 		}
 
 		function check_validity($form) {

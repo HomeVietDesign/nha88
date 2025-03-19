@@ -43,8 +43,6 @@ if(has_role('administrator')) {
 			</div>
 			<?php
 			}
-			
-			edit_post_link( '<span class="dashicons dashicons-edit"></span>' );
 
 			$file_types = get_the_terms( $product->id, 'product_file_type' );
 
@@ -61,23 +59,16 @@ if(has_role('administrator')) {
 			}
 			?>
 			<div class="position-absolute top-0 end-0 z-3">
-				<?php
-				if($can_download) {
-					?>
-					<a href="<?php echo ($product->get('url_data_file')!='')?esc_url($product->get('url_data_file')):'#'; ?>" class="btn btn-sm btn-danger text-yellow fw-bold m-1" target="_blank"><?php echo esc_html($theme_setting->get('download_button_text', 'TẢI FILE 3D')); ?></a>
-					<?php
-				} else {
-					?>
-					<button class="btn btn-sm btn-danger text-yellow fw-bold opacity-50 m-1" tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-html="true" data-bs-content="<?php echo esc_attr($theme_setting->get('product_popup_instruction')); ?>"><?php echo esc_html($theme_setting->get('download_button_text', 'TẢI FILE 3D')); ?></button>
-					<?php
-				}
-				?>
+				<button type="button" class="btn btn-sm btn-danger text-yellow fw-bold m-1" data-bs-toggle="modal" data-bs-target="#request-popup" data-src="<?=esc_url($product->get_image_src('large'))?>" data-id="<?=$product->post->ID?>"><?php echo esc_html($theme_setting->get('request_button_text', 'XEM HỒ SƠ MẪU')); ?></button>
 			</div>
 			<?php
 			if(has_role('administrator')) {
 				?>
-				<div class="position-absolute bottom-0 start-0 z-3 p-1">
-					<?php echo $product->id; ?>
+				<div class="position-absolute bottom-0 end-0 z-3 p-1 d-flex align-items-center">
+					<div class="me-1"><?php echo $product->id; ?></div>
+					<?php
+					edit_post_link( '<span class="dashicons dashicons-edit"></span>' );
+					?>
 				</div>
 				<?php
 			}
@@ -126,15 +117,15 @@ if(has_role('administrator')) {
 
 					if($product->get_price()>0 && $product->get('combo')=='yes') {
 						?>
-						<button type="button" class="btn btn-sm btn-danger text-yellow fw-bold m-1" data-bs-target="#purchase-popup" data-src-large="<?=esc_url($product->get_image_src('large'))?>" data-type="combo" data-id="<?=$product->post->ID?>" data-bs-toggle="modal"<?php echo ($can_download)?' disabled':''; ?>><?php echo esc_html($theme_setting->get('purchase_combo_button_text', 'MUA COMBO')); ?></button>
+						<button type="button" class="btn btn-sm btn-danger text-yellow fw-bold m-1" data-bs-target="#purchase-popup" data-type="combo" data-id="<?=$product->post->ID?>" data-bs-toggle="modal"<?php echo ($can_download)?' disabled':''; ?>><?php echo esc_html($theme_setting->get('purchase_combo_button_text', 'MUA COMBO')); ?></button>
 						<?php
 					}
 
 					?>
 					<?php if($product->get_price()>0) { ?>
-						<button type="button" class="btn btn-sm btn-primary fw-bold m-1" data-bs-target="#purchase-popup" data-src-large="<?=esc_url($product->get_image_src('large'))?>" data-id="<?=$product->post->ID?>" data-bs-toggle="modal"<?php echo ($can_download)?' disabled':''; ?>><?php echo esc_html($theme_setting->get('purchase_button_text', 'ĐẶT MUA')); ?></button>
+						<button type="button" class="btn btn-sm btn-primary fw-bold m-1" data-bs-target="#purchase-popup" data-id="<?=$product->post->ID?>" data-bs-toggle="modal"<?php echo ($can_download)?' disabled':''; ?>><?php echo esc_html($theme_setting->get('purchase_button_text', 'ĐẶT MUA')); ?></button>
 					<?php } elseif($product->get_price()===0) { ?>
-						<button type="button" class="btn btn-sm btn-primary fw-bold m-1" data-bs-target="#purchase-popup" data-src-large="<?=esc_url($product->get_image_src('large'))?>" data-id="<?=$product->post->ID?>" data-bs-toggle="modal"<?php echo ($can_download)?' disabled':''; ?>><?php echo esc_html($theme_setting->get('purchase_free_button_text', 'GỬI EMAIL XÁC NHẬN')); ?></button>
+						<button type="button" class="btn btn-sm btn-primary fw-bold m-1" data-bs-target="#purchase-popup" data-id="<?=$product->post->ID?>" data-bs-toggle="modal"<?php echo ($can_download)?' disabled':''; ?>><?php echo esc_html($theme_setting->get('purchase_free_button_text', 'GỬI EMAIL XÁC NHẬN')); ?></button>
 					<?php } else { ?>
 						<span class="btn btn-sm btn-warning text-red fw-bold m-1">SẮP RA MẮT</span>
 					<?php } ?>

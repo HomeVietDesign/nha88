@@ -42,7 +42,7 @@ class Products {
 
 	public static function edit_post_link($link) {
 		$link = str_replace('<a', '<a target="_blank"', $link);
-		$link = str_replace('post-edit-link', 'post-edit-link position-absolute end-0 bottom-0 z-3 py-1 px-2 text-white', $link);
+		$link = str_replace('post-edit-link', 'post-edit-link d-block py-1 px-2 text-white', $link);
 
 		return $link;
 	}

@@ -39,29 +39,29 @@ class Template_Tags {
 								<a class="btn btn-danger d-block w-100 fw-bold text-nowrap" style="color:#ff0;" href="<?=esc_url($link_last['url'])?>"><?=esc_html($link_last['name'])?></a>
 							</div>
 						</div>
+						<?php
+						if($theme_setting->get('purchase_guide_link', false)) {
+						?>
 						<div class="col">
 							<div class="my-1">
-							<?php
-							if($account) {
-							?>
-								<button type="button" class="logout-post-password d-block w-100 btn btn-success fw-bold text-nowrap" data-hash="<?=esc_attr(COOKIEHASH)?>" data-url="<?=esc_url(fw_current_url())?>" title="Đăng xuất">Đăng xuất</button>
-							<?php } else { ?>
+							
+								<a class="d-block w-100 btn btn-success fw-bold text-nowrap" href="<?=esc_url($theme_setting->get('purchase_guide_link', '#'))?>"><?=esc_html($theme_setting->get('purchase_guide_link_label', 'Hướng dẫn'))?></a>
 								
-								<button type="button" class="d-block w-100 btn btn-success fw-bold text-nowrap" data-bs-toggle="modal" data-bs-target="#modal-account">Đăng nhập</button>
-							<?php } ?>
 							</div>
 						</div>
+						<?php
+						}
+						?>
 					</div>
 				<?php } else { ?>
 					<div class="my-2">
 					<?php
-					if($account) {
+					if($theme_setting->get('purchase_guide_link', false)) {
+						?>
+						<a class="d-block w-100 btn btn-success fw-bold text-nowrap" href="<?=esc_url($theme_setting->get('purchase_guide_link', '#'))?>"><?=esc_html($theme_setting->get('purchase_guide_link_label', 'Hướng dẫn'))?></a>
+						<?php
+					}
 					?>
-						<button type="button" class="logout-post-password d-block w-100 btn btn-success fw-bold text-nowrap" data-hash="<?=esc_attr(COOKIEHASH)?>" data-url="<?=esc_url(fw_current_url())?>" title="Đăng xuất">Đăng xuất</button>
-					<?php } else { ?>
-						
-						<button type="button" class="d-block w-100 btn btn-success fw-bold text-nowrap" data-bs-toggle="modal" data-bs-target="#modal-account">Đăng nhập</button>
-					<?php } ?>
 					</div>
 				<?php }
 

@@ -68,3 +68,20 @@ function wp_do_shortcode( $tag, array $atts = array(), $content = null ) {
 function unescape( $str ) {
 	return html_entity_decode( $str, ENT_QUOTES, 'UTF-8' );
 }
+
+function sanitize_phone_number($phone_number) {
+	$phone_number = preg_replace('/\D/', '', $phone_number);
+	$phone_number = phone_8420($phone_number);
+	if(preg_match('/^0\d{9}$/', $phone_number)) {
+		return $phone_number;
+	}
+	return '';
+}
+
+function phone_8420($phone_no) {
+	return preg_replace('/^\+?84/', '0', $phone_no);
+}
+
+function phone_0284($phone_no) {
+	return preg_replace('/^0/', '+84', $phone_no);
+}

@@ -9,6 +9,18 @@ $options = array(
 		'type' => 'tab',
 		'title' => 'Mua hàng',
 		'options' => array(
+			'purchase_guide_link' => array(
+				'label' => 'Link hướng dẫn',
+				'desc'  => '',
+				'type'  => 'text',
+				'value' => ''
+			),
+			'purchase_guide_link_label' => array(
+				'label' => 'Nhãn nút hướng dẫn',
+				'desc'  => '',
+				'type'  => 'text',
+				'value' => ''
+			),
 			'purchase_button_text' => array(
 				'label' => 'Nhãn nút mua hàng',
 				'desc'  => '',
@@ -42,26 +54,6 @@ $options = array(
 				'html' => '<strong style="text-transform:uppercase;">Cài đặt tài khoản chuyển khoản</strong>',
 				'size' => 'large',
 			),
-			/*
-			'bank_name' => array(
-				'label' => 'Tên ngân hàng',
-				'desc'  => '',
-				'type'  => 'text',
-				'value' => ''
-			),
-			'bank_account' => array(
-				'label' => 'Họ tên',
-				'desc'  => '',
-				'type'  => 'text',
-				'value' => ''
-			),
-			'bank_number' => array(
-				'label' => 'Số tài khoản',
-				'desc'  => '',
-				'type'  => 'text',
-				'value' => ''
-			),
-			*/
 			'bank_qr' => array(
 				'label' => 'Ảnh QR thanh toán chung',
 				'desc'  => '',
@@ -87,12 +79,6 @@ $options = array(
 				'type'  => 'number',
 				'value' => 200000
 			),
-			// 'purchase_combo_qrbank' => array(
-			// 	'type'  => 'upload',
-			// 	'value' => '',
-			// 	'label' => 'Ảnh QR mua combo',
-			// 	'images_only' => true
-			// ),
 			'purchase_combo_popup_title' => array(
 				'label' => 'Tiêu đề popup mua combo',
 				'desc'  => '',

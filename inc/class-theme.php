@@ -175,20 +175,6 @@ class Theme {
 
 		add_filter('get_the_archive_title_prefix', '__return_empty_string');
 
-		/*
-		remove_role( 'editor' );
-		remove_role( 'contributor' );
-		remove_role( 'author' );
-
-		global $wp_roles;
-
-		if ( ! isset( $wp_roles ) )
-			$wp_roles = new WP_Roles();
-
-		//You can replace "administrator" with any other role "editor", "author", "contributor" or "subscriber"...
-		$wp_roles->roles['subscriber']['name'] = 'Khách hàng';
-		$wp_roles->role_names['subscriber'] = 'Khách hàng'; 
-		*/
 	}
 
 	public function image_sizes_choose($size_names) {
@@ -220,6 +206,7 @@ class Theme {
 	}
 
 	public function theme_activation() {
+		/*
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		global $table_prefix, $wpdb;
 
@@ -249,7 +236,7 @@ class Theme {
 
 			dbDelta( $sql );
 		}
-
+		*/
 	}
 
 	public function theme_deactivation() {

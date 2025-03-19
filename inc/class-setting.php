@@ -49,7 +49,7 @@ final class Setting {
 		$recaptcha_verify = json_decode(wp_remote_retrieve_body($check_captcha), true);
 		//debug_log($recaptcha_verify);
 
-		if(boolval($recaptcha_verify["success"]) && $recaptcha_verify["score"] >= $score || WP_DEBUG) {
+		if( (boolval($recaptcha_verify["success"]) && $recaptcha_verify["score"] >= $score) || WP_DEBUG) {
 			return true;			
 		}
 

@@ -17,6 +17,18 @@ $options = array(
 				'size' => 'large',
 				'editor_height' => '400'
 			),
+			'request_button_text' => array(
+				'label' => 'Nhãn nút gửi yêu cầu',
+				'desc'  => '',
+				'type'  => 'text',
+				'value' => 'XEM HỒ SƠ MẪU'
+			),
+			'request_popup_title' => array(
+				'label' => 'Tiêu đề popup xem hồ sơ mẫu',
+				'desc'  => '',
+				'type'  => 'text',
+				'value' => 'ĐĂNG KÝ NHẬN HỒ SƠ MẪU'
+			),
 			'download_button_text' => array(
 				'label' => 'Nhãn nút tải file',
 				'desc'  => '',
@@ -59,20 +71,7 @@ $options = array(
 				'type'  => 'text',
 				'value' => 'Liên hệ'
 			),
-			// 'purchase_popup_title' => array(
-			// 	'label' => 'Tiêu đề popup mua hàng',
-			// 	'desc'  => '',
-			// 	'type'  => 'text',
-			// 	'value' => 'MUA SẢN PHẨM'
-			// ),
-			// 'purchase_popup_desc' => array(
-			// 	'label' => 'Nội dung miêu tả form mua hàng',
-			// 	'desc'  => '',
-			// 	'type'  => 'wp-editor',
-			// 	'size' => 'large',
-			// 	'editor_height' => '300',
-			// 	'value' => '',
-			// ),
+			
 		),
 	),
 );

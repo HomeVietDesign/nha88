@@ -15,7 +15,151 @@ class FW_Shortcode_Products extends FW_Shortcode
 
 		add_action('wp_ajax_purchase', [$this, 'ajax_purchase']);
 		add_action('wp_ajax_nopriv_purchase', [$this, 'ajax_purchase']);
+
+		add_action('wp_ajax_request', [$this, 'ajax_request']);
+		add_action('wp_ajax_nopriv_request', [$this, 'ajax_request']);
 	}
+
+	public function ajax_request() {
+		global $theme_setting;
+
+		$product_id = isset($_POST['product_id']) ? absint($_POST['product_id']) : 0;
+		$customer_name = isset($_POST['customer_name']) ? sanitize_text_field($_POST['customer_name']) : '';
+		$customer_tel = isset($_POST['customer_tel']) ? phone_0284(sanitize_phone_number($_POST['customer_tel'])) : '';
+		$token = isset($_POST['token']) ? $_POST['token'] : '';
+		$ref = isset($_COOKIE['_ref'])?$_COOKIE['_ref']:'';
+		$url = isset($_POST['url']) ? urldecode($_POST['url']) : '';
+		$referrer = urldecode(base64_decode($ref).','.$url);
+		
+		$token_ok = false;
+		$product_ok = false;
+		$customer_name_ok = false;
+		$customer_tel_ok = false;
+
+		$response = [
+			'code' => 0,
+			'msg' => '',
+			'id' => $product_id,
+			'data' => [ // fb pixel event data
+				'phone' => $customer_tel,
+				'name' => $customer_name,
+				'content_type' => 'product',
+			],
+			'fb_pxl_code' => ''
+		];
+
+		$product = new \Nha88\Product($product_id);
+
+		if($theme_setting->recaptcha_verify($token, 0.5)) {
+			$token_ok = true;
+		} else {
+			$response['code'] = -1;
+			$response['msg'] = '<p class="text-red">Lỗi captcha.</p>';
+		}
+
+		if($product->id) {
+			$product_ok = true;
+		} else {
+			$response['code'] = -2;
+			$response['msg'] = '<p class="text-red">Sản phẩm không hợp lệ.</p>';
+		}
+
+		if(''!=$customer_name) {
+			$customer_name_ok = true;
+		} else {
+			$response['code'] = -3;
+			$response['msg'] = '<p class="text-red">Tên của bạn không hợp lệ.</p>';
+		}
+
+		if(''!=$customer_tel) {
+			$customer_tel_ok = true;
+		} else {
+			$response['code'] = -4;
+			$response['msg'] = '<p class="text-red">Số điện thoại của bạn không hợp lệ.</p>';
+		}
+
+		if($product_ok && $customer_name_ok && $customer_tel_ok && $token_ok) {
+
+			$mail_to = [
+				get_bloginfo('admin_email'),
+			];
+
+			$admin2_email = $theme_setting->get_admin_email_address();
+
+			if(!empty($admin2_email)) {
+				$mail_to = array_merge($mail_to, $admin2_email);
+			}
+
+			//$mail_to = 'qqngochv@gmail.com';
+
+			$mail_headers = array('Content-Type: text/html; charset=UTF-8');
+
+			ob_start();
+
+			$subject = '[ '.$customer_tel.' ] '.$theme_setting->get('request_button_text', 'XEM HỒ SƠ MẪU');
+
+			?>
+			<p style='font-weight:bold;'><?php echo esc_html(get_option('request_popup_title', 'ĐĂNG KÝ NHẬN HỒ SƠ MẪU')); ?></p>
+			<p>Họ tên: <?=esc_html($customer_name)?></p>
+			<p>Số điện thoại: <?=esc_html($customer_tel)?></p>
+			<p>Mã SP: <?=esc_html($product->id)?></p>
+			<p>Ảnh SP:</p>
+			<p><img src="<?=esc_url($product->get_image_src('large'))?>" style='max-width:100%;height:auto;'></p>
+			<p>-------------</p>
+			<p>Email gửi từ website: <?=esc_url(home_url())?></p>
+			
+			<p>Nguồn: 
+			<?php
+			if(strpos($referrer, 'facebook')!==false || strpos($referrer, 'fbclid')!==false) {
+				echo 'Facebook';
+			} elseif (strpos($referrer, 'google')!==false || strpos($referrer, 'gclid')!==false) {
+				echo 'Google';
+			} elseif (strpos($referrer, 'zalo')!==false) {
+				echo 'Zalo';
+			} else {
+				echo '(Không xác định)';
+			}
+			?>
+			</p>
+			<p>Quảng cáo: 
+			<?php
+			if(preg_match("/(?:.*)utm_content=([^,&]+)(?:.*)/", $referrer, $matches)) {
+				echo esc_html(str_replace('+', ' ', $matches[1]));
+			}
+			?>
+			</p>
+			<p>Thiết bị: <?=esc_html($_SERVER['HTTP_USER_AGENT'])?></p>
+			<?php
+			$body = ob_get_clean();
+
+			//$response['msg'] = $body;
+			
+			$send = wp_mail( $mail_to, $subject, $body, $mail_headers );
+			
+			//$send = true;
+
+			if($send) {
+				
+				//if(function_exists('as_enqueue_async_action')) {
+					//as_enqueue_async_action('add_customer_order', [['id'=>$id, 'title'=>get_the_title($id), 'image'=>$attachment_img, 'phone'=>$phone, 'name'=>$name, 'type'=>$type, 'url'=>$url, 'ref'=>$ref, 'user_agent'=>$_SERVER['HTTP_USER_AGENT']]], 'order');
+				//}
+				
+				$response['code'] = 1;
+				$response['msg'] = '<p class="text-success"><strong>Yêu cầu của Quý khách đã được gửi đi.</strong> Chúng tôi sẽ phản hồi bạn trong thời gian sớm nhất.</p><p class="text-success text-end">Xin cảm ơn!</p>';
+			} else {
+				$response['code'] = -5;
+				$response['msg'] = '<p class="text-red">Yêu cầu chưa được gửi đi! Vui lòng liên hệ với ban quản trị về sự cố này.</p>';
+			}
+		} else {
+			$response['code'] = -6;
+			//$response['msg'] = 'Thông tin đã nhập không hợp lệ! Xin thử lại.';
+		}
+
+		$response = apply_filters( 'request_submit', $response );
+
+		wp_send_json($response);
+	}
+
 
 	public function ajax_purchase() {
 		global $account, $theme_setting;
@@ -49,7 +193,7 @@ class FW_Shortcode_Products extends FW_Shortcode
 
 		$product = new \Nha88\Product($product_id);
 
-		if(''!=$token && $theme_setting->recaptcha_verify($token, 0.5)) {
+		if($theme_setting->recaptcha_verify($token, 0.5)) {
 			$token_ok = true;
 		} else {
 			$response['code'] = -1;
@@ -288,6 +432,36 @@ class FW_Shortcode_Products extends FW_Shortcode
 			</div>
 		</div>
 
+		<div class="modal fade" id="request-popup" tabindex="-1" role="dialog" aria-labelledby="request-popup-label">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="request-popup-label">
+							<?php echo esc_html($theme_setting->get('request_popup_title', 'ĐĂNG KÝ NHẬN HỒ SƠ MẪU')); ?>
+						</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<form id="frm-request" action="<?php echo esc_url(admin_url('admin-ajax.php')); ?>" method="post" class="modal-body">
+						<input type="hidden" id="request-product-id" name="product_id" value="" required>
+						<div class="mb-3">
+							<div class="form-label mb-1">Tên khách hàng</div>
+							<input type="text" name="customer_name" maxlength="60" class="form-control" value="" required>
+						</div>
+						<div class="mb-3">
+							<div class="form-label mb-1">Điện thoại liên hệ</div>
+							<input type="tel" name="customer_tel" class="form-control" value="" required>
+						</div>
+						<div class="mb-3">
+							<div id="request-response"></div>
+							<button type="submit" id="request-submit" class="w-100 btn btn-danger rounded-0 text-uppercase text-yellow fw-bold" disabled>Bấm gửi đi</button>
+						</div>
+						<div class="mb-3">
+							<div id="request-product-image"></div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
 		<?php
 
 	}

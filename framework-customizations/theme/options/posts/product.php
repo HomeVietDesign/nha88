@@ -38,6 +38,18 @@ $options = [
 		'title'   => 'Trường dữ liệu',
 		'type'    => 'box',
         'options' => [
+        	'frontage' => array(
+				'label' => 'Rộng mặt tiền',
+				'desc'  => 'm',
+				'type'  => 'numeric',
+				//'value' => 0
+			),
+			'depth' => array(
+				'label' => 'Chiều sâu',
+				'desc'  => 'm',
+				'type'  => 'numeric',
+				//'value' => 0
+			),
         	'total_area' => array(
 				'label' => 'Tổng diện tích',
 				'desc'  => 'm2',
