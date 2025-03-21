@@ -11,7 +11,7 @@ class Theme {
 	protected function __construct() {
 		add_action('after_switch_theme', [$this, 'theme_activation']);
 		add_action('switch_theme', [$this, 'theme_deactivation']);
-		add_action('wp_loaded', [$this, 'init_account'], 0);
+		//add_action('wp_loaded', [$this, 'init_account'], 0);
 		add_action('fw_init', [$this, 'setup_theme'] );
 		add_action('fw_init', [$this, 'includes'] );
 		add_action('fw_init', [$this, 'hooks'] );
@@ -184,6 +184,7 @@ class Theme {
 		return array_merge( $size_names, $new_sizes );
 	}
 
+	/*
 	public function init_account() {
 		global $account;
 		
@@ -204,6 +205,7 @@ class Theme {
 			}
 		}
 	}
+	*/
 
 	public function theme_activation() {
 		/*

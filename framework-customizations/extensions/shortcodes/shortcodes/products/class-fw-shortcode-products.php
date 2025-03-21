@@ -162,7 +162,7 @@ class FW_Shortcode_Products extends FW_Shortcode
 
 
 	public function ajax_purchase() {
-		global $account, $theme_setting;
+		global $theme_setting;
 
 		$product_id = isset($_POST['product_id']) ? absint($_POST['product_id']) : 0;
 		$customer_email = isset($_POST['customer_email']) ? sanitize_email($_POST['customer_email']) : '';
@@ -319,7 +319,7 @@ class FW_Shortcode_Products extends FW_Shortcode
 		$type = isset($_GET['type']) ? $_GET['type'] : 'normal';
 		$product = new \Nha88\Product($id);
 		if($product->post && $product->get_price()!==null) {
-			global $account, $theme_setting;
+			global $theme_setting;
 			?>
 			<input type="hidden" id="product_id" name="product_id" value="<?=$id?>" required>
 			<input type="hidden" id="purchase_type" name="purchase_type" value="<?=esc_attr($type)?>" required>
@@ -347,7 +347,7 @@ class FW_Shortcode_Products extends FW_Shortcode
 					?>
 					<div class="mb-3">
 						<div class="form-label mb-1">Email của bạn</div>
-						<input type="email" id="customer_email" name="customer_email" maxlength="60" class="form-control" value="<?php echo $account?esc_attr($account->email):''; ?>" required>
+						<input type="email" id="customer_email" name="customer_email" maxlength="60" class="form-control" value="" required>
 					</div>
 					<?php if($product->get_price() > 0) { ?>
 					<div class="mb-3">
@@ -415,7 +415,7 @@ class FW_Shortcode_Products extends FW_Shortcode
 	}
 
 	public function purchase_popup_html() {
-		global $account, $theme_setting;
+		global $theme_setting;
 
 		?>
 		<div class="modal fade" id="purchase-popup" tabindex="-1" role="dialog" aria-labelledby="purchase-popup-label">

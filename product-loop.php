@@ -1,17 +1,8 @@
 <?php
-global $post, $product, $account, $theme_setting;
+global $post, $product, $theme_setting;
 
 //debug($product);
 
-$can_download = false;
-
-if(has_role('administrator')) {
-	$can_download = false;
-} else {
-	if($account && $account->can_download($post)) {
-		$can_download = true;
-	}
-}
 ?>
 <div class="product col-md-6">
 	<div class="inner d-flex flex-column bg-black">
@@ -125,15 +116,15 @@ if(has_role('administrator')) {
 
 					if($product->get_price()>0 && $product->get('combo')=='yes') {
 						?>
-						<button type="button" class="btn btn-sm btn-danger text-yellow fw-bold m-1" data-bs-target="#purchase-popup" data-type="combo" data-id="<?=$product->post->ID?>" data-bs-toggle="modal"<?php echo ($can_download)?' disabled':''; ?>><?php echo esc_html($theme_setting->get('purchase_combo_button_text', 'MUA COMBO')); ?></button>
+						<button type="button" class="btn btn-sm btn-danger text-yellow fw-bold m-1" data-bs-target="#purchase-popup" data-type="combo" data-id="<?=$product->post->ID?>" data-bs-toggle="modal"><?php echo esc_html($theme_setting->get('purchase_combo_button_text', 'MUA COMBO')); ?></button>
 						<?php
 					}
 
 					?>
 					<?php if($product->get_price()>0) { ?>
-						<button type="button" class="btn btn-sm btn-primary fw-bold m-1" data-bs-target="#purchase-popup" data-id="<?=$product->post->ID?>" data-bs-toggle="modal"<?php echo ($can_download)?' disabled':''; ?>><?php echo esc_html($theme_setting->get('purchase_button_text', 'ĐẶT MUA')); ?></button>
+						<button type="button" class="btn btn-sm btn-primary fw-bold m-1" data-bs-target="#purchase-popup" data-id="<?=$product->post->ID?>" data-bs-toggle="modal"><?php echo esc_html($theme_setting->get('purchase_button_text', 'ĐẶT MUA')); ?></button>
 					<?php } elseif($product->get_price()===0) { ?>
-						<button type="button" class="btn btn-sm btn-primary fw-bold m-1" data-bs-target="#purchase-popup" data-id="<?=$product->post->ID?>" data-bs-toggle="modal"<?php echo ($can_download)?' disabled':''; ?>><?php echo esc_html($theme_setting->get('purchase_free_button_text', 'GỬI EMAIL XÁC NHẬN')); ?></button>
+						<button type="button" class="btn btn-sm btn-primary fw-bold m-1" data-bs-target="#purchase-popup" data-id="<?=$product->post->ID?>" data-bs-toggle="modal"><?php echo esc_html($theme_setting->get('purchase_free_button_text', 'GỬI EMAIL XÁC NHẬN')); ?></button>
 					<?php } else { ?>
 						<span class="btn btn-sm btn-warning text-red fw-bold m-1">SẮP RA MẮT</span>
 					<?php } ?>

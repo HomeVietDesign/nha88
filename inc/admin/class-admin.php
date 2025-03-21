@@ -35,6 +35,8 @@ class Main {
 		add_action( 'wp_ajax_change_product_dimension', ['\Nha88\Admin\Product', 'ajax_change_product_dimension'] );
 		add_action( 'restrict_manage_posts', ['\Nha88\Admin\Product', 'filter_by_taxonomy'] );
 		add_filter( 'parse_query', ['\Nha88\Admin\Product', 'taxonomy_parse_filter'] );
+		add_action( 'add_meta_boxes', ['\Nha88\Admin\Product', 'meta_boxes'] );
+		add_action( 'edit_form_after_title', ['\Nha88\Admin\Product', 'display_id'] );
 	}
 
 	private function hooks_product_price() {

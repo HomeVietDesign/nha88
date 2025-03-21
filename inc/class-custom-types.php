@@ -218,7 +218,7 @@ class Custom_Types {
 			'hierarchical'      => true,
 			'labels'            => $labels,
 			'show_ui'           => true,
-			'show_admin_column' => true,
+			'show_admin_column' => false,
 			'query_var'         => true,
 			'rewrite'           => false,
 			'public' 			=> false,

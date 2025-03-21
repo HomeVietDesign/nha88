@@ -3,6 +3,22 @@ namespace Nha88\Admin;
 
 class Product {
 
+	public static function display_id($post) {
+		if($post->post_type=='product') {
+			?>
+			<div id="iddiv"><?=esc_html($post->ID)?></div>
+			<?php
+		}
+	}
+
+	public static function meta_boxes() {
+		remove_meta_box(
+			'customerdiv' // ID
+			,   'product'            // Screen, empty to support all post types
+			,   'side'      // Context
+		);
+	}
+
 	public static function ajax_change_product_dimension() {
 		$post_id = isset($_REQUEST['id']) ? absint($_REQUEST['id']) : 0;
 		$val = isset($_REQUEST['val']) ? floatval($_REQUEST['val']) : '';

@@ -89,7 +89,7 @@ class Product extends Post {
 	public function get_price() {
 		global $theme_setting;
 
-		$area = absint($this->get('total_area',''));
+		$area = floatval($this->get('frontage',0)) * floatval($this->get('depth',0));
 		$price = absint($theme_setting->get('product_price',0));
 		$sale = $this->get('sale', 'normal');
 		$value = $area*$price;

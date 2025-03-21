@@ -13,7 +13,7 @@ class Template_Tags {
 	}
 
 	public static function footer_fixed() {
-		global $theme_setting, $account, $post;
+		global $theme_setting, $post;
 
 		$footer_links = $theme_setting->get('footer_links');
 		?>
@@ -99,24 +99,7 @@ class Template_Tags {
 			</div>
 			<?php
 		}
-		?>
-		<div class="modal fade" id="modal-account" tabindex="-1">
-			<div class="modal-dialog modal-md modal-dialog-centered">
-				<div class="modal-content rounded-0">
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-					<div class="modal-body">
-					<?php if($account) {
-						?>
-						<div><button type="button" class="btn btn-danger">Đăng xuất</button></div>
-						<?php
-					} else {
-						echo get_the_password_form();
-					} ?>
-					</div>
-				</div>
-			</div>
-		</div>
-		<?php
+		
 	}
 
 	public static function the_password_form($output, $post) {
