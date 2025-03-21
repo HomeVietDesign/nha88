@@ -75,7 +75,7 @@ if(has_role('administrator')) {
 
 			if($product->get('frontage','')!=''&&$product->get('depth','')!='') {
 				?>
-				<div class="position-absolute bottom-0 start-0 z-3 py-1 px-2">
+				<div class="position-absolute bottom-0 start-0 z-3 px-2">
 					<div class="product-dimension fw-bold text-yellow mx-1">Kích thước: <?=esc_html($product->get('frontage',''))?>m x <?=esc_html($product->get('depth',''))?>m</div>
 				</div>
 				<?php

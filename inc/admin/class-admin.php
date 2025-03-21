@@ -32,6 +32,7 @@ class Main {
 		add_action( 'wp_ajax_change_product_url_data_file', ['\Nha88\Admin\Product', 'ajax_change_product_url_data_file'] );
 		add_action( 'wp_ajax_change_product_has_file', ['\Nha88\Admin\Product', 'ajax_change_product_has_file'] );
 		add_action( 'wp_ajax_change_product_combo', ['\Nha88\Admin\Product', 'ajax_change_product_combo'] );
+		add_action( 'wp_ajax_change_product_dimension', ['\Nha88\Admin\Product', 'ajax_change_product_dimension'] );
 		add_action( 'restrict_manage_posts', ['\Nha88\Admin\Product', 'filter_by_taxonomy'] );
 		add_filter( 'parse_query', ['\Nha88\Admin\Product', 'taxonomy_parse_filter'] );
 	}

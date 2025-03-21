@@ -52,12 +52,12 @@ $options = [
 				'integer'  => false,
 				//'value' => 0
 			),
-        	'total_area' => array(
-				'label' => 'Tổng diện tích',
-				'desc'  => 'm2',
-				'type'  => 'numeric',
-				//'value' => 0
-			),
+        	// 'total_area' => array(
+			// 	'label' => 'Tổng diện tích',
+			// 	'desc'  => 'm2',
+			// 	'type'  => 'numeric',
+			// 	//'value' => 0
+			// ),
         	'url_data_file' => array(
 				'type' => 'text',
 				'desc' => 'URL thư mục google drive chứa file cần tải về, và được chia sẻ với email khách hàng đã mua.',

@@ -1,6 +1,29 @@
 window.addEventListener('DOMContentLoaded', function(){
 	jQuery(function($){
 
+		$(document).on('change', 'input.input-dimension', function(e){
+			let $input = $(this),
+				nonce = $input.data('nonce'),
+				id = $input.data('id'),
+				dimension = $input.data('dimension'),
+				val = $input.val();
+
+			$input.prop('disabled', true);
+
+			$.ajax({
+				url: ajaxurl,
+				type: 'post',
+				dataType: 'json',
+				data: {action:'change_product_dimension',id: id, nonce: nonce, dimension: dimension, val: val},
+				success: function(response) {
+					$input.val(response);
+				},
+				complete: function() {
+					$input.prop('disabled', false);
+				}
+			});
+		});
+
 		$(document).on('change', 'input.combo', function(e){
 			let $this = $(this),
 				nonce = $this.data('nonce'),
@@ -25,7 +48,7 @@ window.addEventListener('DOMContentLoaded', function(){
 				complete: function() {
 					$this.prop('disabled', false);
 				}
-			})
+			});
 		});
 
 		$(document).on('change', 'input.has_file', function(e){

@@ -9,3 +9,18 @@
 	border: rgba(0, 0, 0, .1) 1px solid;
 	margin-bottom: 3px;
 }
+.dimensions.column-dimensions label {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin: 3px 0;
+	padding: 0 3px;
+	border-radius: 3px;
+	border: rgba(0, 0, 0, .2) 1px solid;
+}
+.dimensions.column-dimensions label input {
+	width: 80px;
+	border: 0;
+	background-color: rgba(0, 0, 0, .03);
+	margin: 3px 0;
+}
