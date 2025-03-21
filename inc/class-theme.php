@@ -108,7 +108,7 @@ class Theme {
 		include_once THEME_DIR.'/inc/class-assets.php';
 		include_once THEME_DIR.'/inc/class-post.php';
 		include_once THEME_DIR.'/inc/class-term.php';
-		include_once THEME_DIR.'/inc/class-account.php';
+		//include_once THEME_DIR.'/inc/class-account.php';
 		include_once THEME_DIR.'/inc/class-product.php';
 		include_once THEME_DIR.'/inc/class-product-price.php';
 		include_once THEME_DIR.'/inc/class-template-tags.php';
