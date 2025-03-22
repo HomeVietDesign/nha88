@@ -7,7 +7,8 @@ class Official_Facebook_Pixel {
 	private function __construct() {
 		add_action( 'init', [$this, 'remove_ofp_wpcf7_integration'], 10 );
 		
-		include_once THEME_DIR.'/inc/official-facebook-pixel/class-facebook-purchase.php';
+		//include_once THEME_DIR.'/inc/official-facebook-pixel/class-facebook-purchase.php';
+		include_once THEME_DIR.'/inc/official-facebook-pixel/class-facebook-request.php';
 		include_once THEME_DIR.'/inc/official-facebook-pixel/class-facebook-wpcf7.php';
 	}
 
