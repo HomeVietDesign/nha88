@@ -50,7 +50,7 @@ global $post, $product, $theme_setting;
 			}
 			?>
 			<div class="position-absolute top-0 end-0 z-3">
-				<button type="button" class="btn btn-sm btn-danger text-yellow fw-bold m-1" data-bs-toggle="modal" data-bs-target="#request-popup" data-src="<?=esc_url($product->get_image_src('large'))?>" data-id="<?=$product->post->ID?>"><?php echo esc_html($theme_setting->get('request_button_text', 'XEM HỒ SƠ MẪU')); ?></button>
+				<button type="button" class="btn btn-sm btn-danger text-yellow fw-bold m-1" data-bs-toggle="modal" data-bs-target="#request-popup" data-src="<?=esc_url($product->get_image_src('large'))?>" data-id="<?=$product->post->ID?>" data-type="request" data-popup-title="<?php echo esc_attr($theme_setting->get('request_popup_title', 'XEM HỒ SƠ MẪU')); ?>"><?php echo esc_html($theme_setting->get('request_button_text', 'ĐĂNG KÝ NHẬN HỒ SƠ MẪU')); ?></button>
 			</div>
 			<?php
 			if(has_role('administrator')) {
@@ -84,47 +84,15 @@ global $post, $product, $theme_setting;
 						<?php
 					}
 
-					if($product->get('images_floor_plan')) {
-						$data_images = [];
-						foreach ($product->get('images_floor_plan') as $key => $value) {
-							$src = wp_get_attachment_image_src($value['attachment_id'], 'full');
-							$data_images[] = [
-								'src' => $src[0],
-								'width' => $src[1],
-								'height' => $src[2]
-							];
-						}
-						?>
-						<button type="button" class="btn btn-sm btn-success fw-bold m-1 floor_plan_button" data-images="<?php echo esc_attr(json_encode($data_images)); ?>"><?php echo esc_html($theme_setting->get('floor_plan_button_text', 'MẶT BẰNG')); ?></button>
-						<?php
-					}
-
-					if($product->get('images_interior')) {
-						$data_images = [];
-						foreach ($product->get('images_interior') as $key => $value) {
-							$src = wp_get_attachment_image_src($value['attachment_id'], 'full');
-							$data_images[] = [
-								'src' => $src[0],
-								'width' => $src[1],
-								'height' => $src[2]
-							];
-						}
-						?>
-						<button type="button" class="btn btn-sm btn-success fw-bold m-1 interior_button" data-images="<?php echo esc_attr(json_encode($data_images)); ?>"><?php echo esc_html($theme_setting->get('interior_button_text', 'NỘI THẤT')); ?></button>
-						<?php
-					}
-
-					if($product->get_price()>0 && $product->get('combo')=='yes') {
-						?>
-						<button type="button" class="btn btn-sm btn-danger text-yellow fw-bold m-1" data-bs-target="#purchase-popup" data-type="combo" data-id="<?=$product->post->ID?>" data-bs-toggle="modal"><?php echo esc_html($theme_setting->get('purchase_combo_button_text', 'MUA COMBO')); ?></button>
-						<?php
-					}
-
 					?>
+					<button type="button" class="btn btn-sm btn-success fw-bold m-1 floor_plan_button" data-bs-target="#request-popup" data-bs-toggle="modal" data-src="<?=esc_url($product->get_image_src('large'))?>" data-id="<?=$product->post->ID?>" data-type="floor_plan" data-popup-title="<?php echo esc_attr($theme_setting->get('floor_plan_popup_title', 'ĐĂNG KÝ NHẬN MẶT BẰNG')); ?>"><?php echo esc_html($theme_setting->get('floor_plan_button_text', 'MẶT BẰNG')); ?></button>
+				
+					<button type="button" class="btn btn-sm btn-success fw-bold m-1 interior_button" data-bs-target="#request-popup" data-bs-toggle="modal" data-src="<?=esc_url($product->get_image_src('large'))?>" data-id="<?=$product->post->ID?>" data-type="interior" data-popup-title="<?php echo esc_attr($theme_setting->get('interior_popup_title', 'ĐĂNG KÝ XEM NỘI THẤT')); ?>"><?php echo esc_html($theme_setting->get('interior_button_text', 'NỘI THẤT')); ?></button>
+				
 					<?php if($product->get_price()>0) { ?>
-						<button type="button" class="btn btn-sm btn-primary fw-bold m-1" data-bs-target="#purchase-popup" data-id="<?=$product->post->ID?>" data-bs-toggle="modal"><?php echo esc_html($theme_setting->get('purchase_button_text', 'ĐẶT MUA')); ?></button>
+						<button type="button" class="btn btn-sm btn-primary fw-bold m-1" data-bs-target="#request-popup" data-bs-toggle="modal" data-src="<?=esc_url($product->get_image_src('large'))?>" data-id="<?=$product->post->ID?>" data-type="purchase" data-popup-title="<?php echo esc_attr($theme_setting->get('purchase_popup_title', 'MUA HỒ SƠ ĐÃ LỰA CHỌN')); ?>"><?php echo esc_html($theme_setting->get('purchase_button_text', 'ĐẶT MUA')); ?></button>
 					<?php } elseif($product->get_price()===0) { ?>
-						<button type="button" class="btn btn-sm btn-primary fw-bold m-1" data-bs-target="#purchase-popup" data-id="<?=$product->post->ID?>" data-bs-toggle="modal"><?php echo esc_html($theme_setting->get('purchase_free_button_text', 'GỬI EMAIL XÁC NHẬN')); ?></button>
+						
 					<?php } else { ?>
 						<span class="btn btn-sm btn-warning text-red fw-bold m-1">SẮP RA MẮT</span>
 					<?php } ?>

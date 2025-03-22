@@ -1,20 +1,27 @@
 <?php if (!defined('FW')) die('Forbidden');
 
 class FW_Shortcode_Products extends FW_Shortcode
-{
-	
+{	
+	const REQUEST_CODE = -1;
+	const REQUEST_TOKEN_CODE = -2;
+	const REQUEST_PRODUCT_CODE = -3;
+	const REQUEST_TYPE_CODE = -4;
+	const REQUEST_CUSTOMER_NAME_CODE = -5;
+	const REQUEST_CUSTOMER_TEL_CODE = -6;
+	const REQUEST_SEND_CODE = -7;
+
 	public function _init()
 	{
 		add_action('wp_ajax_products_paginate', [$this, 'ajax_products_paginate']);
 		add_action('wp_ajax_nopriv_products_paginate', [$this, 'ajax_products_paginate']);
 
-		add_action('wp_footer', [$this, 'purchase_popup_html'], 99);
+		add_action('wp_footer', [$this, 'request_popup_html'], 99);
 
 		add_action('wp_ajax_purchase_load_form', [$this, 'ajax_purchase_load_form']);
 		add_action('wp_ajax_nopriv_purchase_load_form', [$this, 'ajax_purchase_load_form']);
 
-		add_action('wp_ajax_purchase', [$this, 'ajax_purchase']);
-		add_action('wp_ajax_nopriv_purchase', [$this, 'ajax_purchase']);
+		// add_action('wp_ajax_purchase', [$this, 'ajax_purchase']);
+		// add_action('wp_ajax_nopriv_purchase', [$this, 'ajax_purchase']);
 
 		add_action('wp_ajax_request', [$this, 'ajax_request']);
 		add_action('wp_ajax_nopriv_request', [$this, 'ajax_request']);
@@ -24,6 +31,7 @@ class FW_Shortcode_Products extends FW_Shortcode
 		global $theme_setting;
 
 		$product_id = isset($_POST['product_id']) ? absint($_POST['product_id']) : 0;
+		$type = isset($_POST['type']) ? sanitize_text_field($_POST['type']) : '';
 		$customer_name = isset($_POST['customer_name']) ? sanitize_text_field($_POST['customer_name']) : '';
 		$customer_tel = isset($_POST['customer_tel']) ? phone_0284(sanitize_phone_number($_POST['customer_tel'])) : '';
 		$token = isset($_POST['token']) ? $_POST['token'] : '';
@@ -33,6 +41,7 @@ class FW_Shortcode_Products extends FW_Shortcode
 		
 		$token_ok = false;
 		$product_ok = false;
+		$type_ok = false;
 		$customer_name_ok = false;
 		$customer_tel_ok = false;
 
@@ -53,28 +62,35 @@ class FW_Shortcode_Products extends FW_Shortcode
 		if($theme_setting->recaptcha_verify($token, 0.5)) {
 			$token_ok = true;
 		} else {
-			$response['code'] = -1;
+			$response['code'] = self::REQUEST_TOKEN_CODE;
 			$response['msg'] = '<p class="text-red">Lỗi captcha.</p>';
 		}
 
 		if($product->id) {
 			$product_ok = true;
 		} else {
-			$response['code'] = -2;
+			$response['code'] = self::REQUEST_PRODUCT_CODE;
 			$response['msg'] = '<p class="text-red">Sản phẩm không hợp lệ.</p>';
+		}
+
+		if(''!=$type) {
+			$type_ok = true;
+		} else {
+			$response['code'] = self::REQUEST_TYPE_CODE;
+			$response['msg'] = '<p class="text-red">Không rõ yêu cầu.</p>';
 		}
 
 		if(''!=$customer_name) {
 			$customer_name_ok = true;
 		} else {
-			$response['code'] = -3;
+			$response['code'] = self::REQUEST_CUSTOMER_NAME_CODE;
 			$response['msg'] = '<p class="text-red">Tên của bạn không hợp lệ.</p>';
 		}
 
 		if(''!=$customer_tel) {
 			$customer_tel_ok = true;
 		} else {
-			$response['code'] = -4;
+			$response['code'] = self::REQUEST_CUSTOMER_TEL_CODE;
 			$response['msg'] = '<p class="text-red">Số điện thoại của bạn không hợp lệ.</p>';
 		}
 
@@ -96,10 +112,10 @@ class FW_Shortcode_Products extends FW_Shortcode
 
 			ob_start();
 
-			$subject = '[ '.$customer_tel.' ] '.$theme_setting->get('request_button_text', 'XEM HỒ SƠ MẪU');
+			$subject = '[ '.$customer_tel.' ] '.$theme_setting->get($type.'_button_text', '');
 
 			?>
-			<p style='font-weight:bold;'><?php echo esc_html(get_option('request_popup_title', 'ĐĂNG KÝ NHẬN HỒ SƠ MẪU')); ?></p>
+			<p style='font-weight:bold;'><?php echo esc_html($theme_setting->get($type.'_popup_title', '')); ?></p>
 			<p>Họ tên: <?=esc_html($customer_name)?></p>
 			<p>Số điện thoại: <?=esc_html($customer_tel)?></p>
 			<p>Mã SP: <?=esc_html($product->id)?></p>
@@ -147,12 +163,11 @@ class FW_Shortcode_Products extends FW_Shortcode
 				$response['code'] = 1;
 				$response['msg'] = '<p class="text-success"><strong>Yêu cầu của Quý khách đã được gửi đi.</strong> Chúng tôi sẽ phản hồi bạn trong thời gian sớm nhất.</p><p class="text-success text-end">Xin cảm ơn!</p>';
 			} else {
-				$response['code'] = -5;
+				$response['code'] = self::REQUEST_SEND_CODE;
 				$response['msg'] = '<p class="text-red">Yêu cầu chưa được gửi đi! Vui lòng liên hệ với ban quản trị về sự cố này.</p>';
 			}
 		} else {
-			$response['code'] = -6;
-			//$response['msg'] = 'Thông tin đã nhập không hợp lệ! Xin thử lại.';
+			$response['code'] = self::REQUEST_CODE;
 		}
 
 		$response = apply_filters( 'request_submit', $response );
@@ -414,35 +429,21 @@ class FW_Shortcode_Products extends FW_Shortcode
 		die;
 	}
 
-	public function purchase_popup_html() {
+	public function request_popup_html() {
 		global $theme_setting;
 
 		?>
-		<div class="modal fade" id="purchase-popup" tabindex="-1" role="dialog" aria-labelledby="purchase-popup-label">
-			<div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="purchase-popup-label">
-							<?php //echo esc_html($theme_setting->get('purchase_popup_title', 'MUA SẢN PHẨM')); ?>
-						</h5>
-						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-					</div>
-					<form id="frm-purchase" action="<?php echo esc_url(admin_url('admin-ajax.php')); ?>" method="post" class="modal-body" enctype="multipart/form-data"></form>
-				</div>
-			</div>
-		</div>
 
 		<div class="modal fade" id="request-popup" tabindex="-1" role="dialog" aria-labelledby="request-popup-label">
 			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h5 class="modal-title" id="request-popup-label">
-							<?php echo esc_html($theme_setting->get('request_popup_title', 'ĐĂNG KÝ NHẬN HỒ SƠ MẪU')); ?>
-						</h5>
+						<h5 class="modal-title" id="request-popup-label"></h5>
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
 					<form id="frm-request" action="<?php echo esc_url(admin_url('admin-ajax.php')); ?>" method="post" class="modal-body">
 						<input type="hidden" id="request-product-id" name="product_id" value="" required>
+						<input type="hidden" id="request-type" name="type" value="" required>
 						<div class="mb-3">
 							<div class="form-label mb-1">Tên khách hàng</div>
 							<input type="text" name="customer_name" maxlength="60" class="form-control" value="" required>

@@ -9,14 +9,7 @@ $options = array(
 		'type' => 'tab',
 		'title' => 'Sản phẩm',
 		'options' => array(
-			'product_popup_instruction' => array(
-				'label' => 'Hướng dẫn sử dụng',
-				'desc'  => '',
-				'type'  => 'wp-editor',
-				'value' => '',
-				'size' => 'large',
-				'editor_height' => '400'
-			),
+			
 			'request_button_text' => array(
 				'label' => 'Nhãn nút gửi yêu cầu',
 				'desc'  => '',
@@ -29,12 +22,74 @@ $options = array(
 				'type'  => 'text',
 				'value' => 'ĐĂNG KÝ NHẬN HỒ SƠ MẪU'
 			),
-			'download_button_text' => array(
-				'label' => 'Nhãn nút tải file',
+
+			'floor_plan_button_text' => array(
+				'label' => 'Nhãn nút xem mặt bằng',
 				'desc'  => '',
 				'type'  => 'text',
-				'value' => 'TẢI FILE 3D'
+				'value' => 'MẶT BẰNG'
 			),
+			'floor_plan_popup_title' => array(
+				'label' => 'Tiêu đề popup xem mặt bằng',
+				'desc'  => '',
+				'type'  => 'text',
+				'value' => 'ĐĂNG KÝ XEM MẶT BẰNG MẪU'
+			),
+
+			'interior_button_text' => array(
+				'label' => 'Nhãn nút xem nội thất',
+				'desc'  => '',
+				'type'  => 'text',
+				'value' => 'NỘI THẤT'
+			),
+			'interior_popup_title' => array(
+				'label' => 'Tiêu đề popup xem nội thất',
+				'desc'  => '',
+				'type'  => 'text',
+				'value' => 'ĐĂNG KÝ XEM NỘI THẤT MẪU'
+			),
+
+			'purchase_button_text' => array(
+				'label' => 'Nhãn nút đặt mua',
+				'desc'  => '',
+				'type'  => 'text',
+				'value' => 'ĐẶT MUA'
+			),
+			'purchase_popup_title' => array(
+				'label' => 'Tiêu đề popup đặt mua',
+				'desc'  => '',
+				'type'  => 'text',
+				'value' => 'ĐẶT MUA HỒ SƠ ĐÃ LỰA CHỌN'
+			),
+
+			'purchase_guide_link' => array(
+				'label' => 'Link hướng dẫn',
+				'desc'  => '',
+				'type'  => 'text',
+				'value' => ''
+			),
+			'purchase_guide_link_label' => array(
+				'label' => 'Nhãn nút hướng dẫn',
+				'desc'  => '',
+				'type'  => 'text',
+				'value' => ''
+			),
+			
+			// 'product_popup_instruction' => array(
+			// 	'label' => 'Hướng dẫn sử dụng',
+			// 	'desc'  => '',
+			// 	'type'  => 'wp-editor',
+			// 	'value' => '',
+			// 	'size' => 'large',
+			// 	'editor_height' => '400'
+			// ),
+
+			// 'download_button_text' => array(
+			// 	'label' => 'Nhãn nút tải file',
+			// 	'desc'  => '',
+			// 	'type'  => 'text',
+			// 	'value' => 'TẢI FILE 3D'
+			// ),
 			'upload_button_text' => array(
 				'label' => 'Nhãn nút up file',
 				'desc'  => 'Dành cho quản trị',

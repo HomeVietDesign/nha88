@@ -12,5 +12,5 @@ $options = array(
 	fw()->theme->get_options( 'google-settings' ),
 	fw()->theme->get_options( 'custom-script-settings' ),
 	fw()->theme->get_options( 'product-settings' ),
-	fw()->theme->get_options( 'purchase-settings' ),
+	//fw()->theme->get_options( 'purchase-settings' ),
 );

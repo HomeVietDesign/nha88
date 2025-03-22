@@ -13,15 +13,23 @@ window.addEventListener('DOMContentLoaded', function(){
 			let $modal = $(this),
 				$button = $(event.relatedTarget),
 				$form = $('#frm-request'),
-				id = parseInt($button.data('id'));
+				id = parseInt($button.data('id')),
+				title = $button.data('popup-title'),
+				type = $button.data('type');
 			
+			$('#request-popup-label').text(title);
 			$('#request-product-id').val(id);
+			$('#request-type').val(type);
 			$('#request-product-image').html('<img src="'+$button.data('src')+'">');
 			
-		}).on('hidden.bs.modal', function (e) {
+		}).on('hidden.bs.modal', function (event) {
 
+			$('#request-popup-label').text('');
 			$('#request-product-id').val('');
+			$('#request-type').val('');
+			$('#request-response').html('');
 			$('#request-product-image').html('');
+			$('#request-submit').prop('disabled', true);
 
 
 		});
@@ -120,6 +128,7 @@ window.addEventListener('DOMContentLoaded', function(){
 			return false;
 		});
 
+		/*
 		$(document).on('click', '.floor_plan_button, .interior_button', function(e){
 			let pswp = new PhotoSwipe({
 				dataSource: $(this).data('images'),
@@ -128,151 +137,7 @@ window.addEventListener('DOMContentLoaded', function(){
 			});
 			pswp.init();
 		});
-
-		function checkPurchaseFormValid() {
-			let formData = new FormData($('#frm-purchase').get(0));
-			//const imgRegex = /image\/(gif|jpe?g|png|webp)$/i;
-			let valid = true;
-			for (const pair of formData.entries()) {
-				//console.log(pair[0], pair[1]);
-				valid = (valid && document.getElementById(pair[0]).validity.valid);
-				//console.log(document.getElementById(pair[0]).validity.valid);
-			}
-
-			return valid;
-			
-		}
-
-		$(document).on('input', '#customer_email, #customer_bank', function() {
-			if(checkPurchaseFormValid()) {
-				$('#purchase-submit').prop('disabled', false);
-			} else {
-				$('#purchase-submit').prop('disabled', true);
-			}
-		});
-
-		$(document).on('input', '#customer_bank', function() {
-			let $input = $(this);
-			$input.closest('[for="customer_bank"]').find('.form-control').text($input.val().split('\\').pop());
-		});
-
-		$('#purchase-popup').on('show.bs.modal', function (event) {
-			let $modal = $(this),
-				$button = $(event.relatedTarget),
-				$form = $('#frm-purchase'),
-				id = parseInt($button.data('id')),
-				type = $button.data('type');
-
-			//console.log($button);
-			switch(type) {
-				case 'combo':
-					$('#purchase-popup-label').text(theme.purchase_combo_popup_title);
-					break;
-				default:
-					$('#purchase-popup-label').text(theme.purchase_popup_title);
-					break;
-			}
-
-			$.ajax({
-				url: theme.ajax_url+'?action=purchase_load_form',
-				type: 'GET',
-				data: {'id': id, 'type': type},
-				beforeSend: function() {
-					$form.html('<p class="text-primary">Đang tải...</p>');
-				},
-				success: function(response) {
-					$form.html(response);
-					if(checkPurchaseFormValid()) {
-						$('#purchase-submit').prop('disabled', false);
-					} else {
-						$('#purchase-submit').prop('disabled', true);
-					}
-				},
-				error: function(xhr) {
-					$form.html('<p class="text-danger">Có lỗi xảy ra. Xin vui lòng thử lại.</p>');
-				},
-				complete: function() {
-					
-				}
-			});
-			
-		}).on('hidden.bs.modal', function (e) {
-
-			$('#purchase_content').html('');
-			$('#product_id').val('');
-			
-			$('#purchase-product-image').html('');
-			$('#purchase-product-qrbank').html('');
-
-		});
-
-		let ajax_purchase = null;
-		function submit_purchase(event, token='') {
-			let $form = $(event.currentTarget)
-				,formData = new FormData($form[0])
-				,$button = $form.find('[type="submit"]')
-				,$response = $('#purchase-response')
-				//,ref = getCookie('_ref')
-				;
-			
-			$button.prop('disabled', true);
-
-			formData.append('token', token);
-			//formData.append('ref', ref);
-			formData.append('url', window.location.href);
-
-			if(ajax_purchase!=null) ajax_purchase.abort();
-
-			ajax_purchase = $.ajax({
-				url: theme.ajax_url+'?action=purchase',
-				type: 'POST',
-				processData: false,
-				contentType: false,
-				data: formData,
-				dataType: 'json',
-				cache: false,
-				beforeSend: function() {
-					$response.html('<p class="text-primary">Đang gửi giao dịch...</p>');
-				},
-				success: function(response) {
-					const eventPurchase = new CustomEvent('purchase', {
-						bubbles: true,
-						detail: { id:response.data.id, email:response.data.email, fb_pxl_code:response.fb_pxl_code }
-					});
-
-					if(response['code']>0) {
-						event.target.dispatchEvent(eventPurchase);
-					}
-
-					$response.html(response['msg']);
-				},
-				error: function(xhr) {
-					$response.html('<p class="text-danger">Có lỗi xảy ra. Xin vui lòng thử lại.</p>');
-					$button.prop('disabled', false);
-				},
-				complete: function() {
-					$form.trigger('reset');
-				}
-			});
-		}
-
-		$('#frm-purchase').on('submit', function(event){
-			event.preventDefault();
-			let $form = $(this);
-			$form.find('[type="submit"]').prop('disabled', true);
-
-			if(typeof grecaptcha != 'undefined') {
-				grecaptcha.ready(function() {
-					grecaptcha.execute(theme.sitekey, {action: 'purchase'}).then(function(token) {
-						submit_purchase(event, token);
-					}); // recaptcha execute
-				}); // recaptcha ready
-			} else {
-				submit_purchase(event, '');
-			}
-
-			return false;
-		});
+		*/
 		
 		$(".product-images-slider").owlCarousel({
 			items:1,
