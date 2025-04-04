@@ -50,7 +50,7 @@ class Products {
 	public static function the_title($title, $post_id) {
 		$_post = get_post( $post_id );
 		if($_post && $_post->post_type=='product') {
-			$title = $_post->ID;
+			if(empty($title)) $title = $_post->ID;
 		}
 
 		return $title;
