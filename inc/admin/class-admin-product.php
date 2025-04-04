@@ -233,7 +233,7 @@ class Product {
 	public static function enqueue_scripts($hook) {
 		global $post_type;
 
-		if(($hook=='edit.php' || $hook=='post.php') && $post_type=='product') {
+		if(($hook=='edit.php' || $hook=='post.php' || $hook=='post-new.php') && $post_type=='product') {
 			//add_thickbox();
 			//wp_enqueue_script('jquery-input-number', THEME_URI.'/libs/jquery-input-number/jquery-input-number.js', array('jquery'), '', false);
 

@@ -32,6 +32,7 @@ class Theme {
 		$this->hooks_product();
 		$this->hooks_ajax();
 		$this->hooks_background_process();
+
 	}
 
 	private function hooks_background_process() {
@@ -129,6 +130,7 @@ class Theme {
 		add_filter('use_widgets_block_editor', '__return_false');
 		add_filter('use_block_editor_for_post_type', '__return_false', 10);
 
+		add_filter('wp_img_tag_add_auto_sizes', '__return_false');
 		add_filter('image_size_names_choose', [$this, 'image_sizes_choose']);
 
 		add_theme_support( 'title-tag' );

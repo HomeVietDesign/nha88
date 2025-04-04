@@ -18,14 +18,14 @@ global $post, $product, $theme_setting;
 						<div class="ratio ratio-1x1">
 							<?php
 							if($key==0) {
-							echo wp_get_attachment_image($value['attachment_id'], 'medium_large', false, ['class'=>'object-fit-cover']);
+								echo wp_get_attachment_image($value['attachment_id'], 'full', false, ['class'=>'object-fit-cover']);
 							} else {
-								$src = wp_get_attachment_image_src( $value['attachment_id'], 'medium_large', false );
+								$src = wp_get_attachment_image_src( $value['attachment_id'], 'full', false );
 								?>
 								<img class="owl-lazy object-fit-cover" data-src="<?php echo esc_url($src[0]); ?>">
 								<?php
 							}
-							?>
+							?>	
 						</div>
 						<?php
 					}
