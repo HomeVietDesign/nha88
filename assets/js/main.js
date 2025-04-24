@@ -20,7 +20,9 @@ window.addEventListener('DOMContentLoaded', function(){
 			$('#request-popup-label').text(title);
 			$('#request-product-id').val(id);
 			$('#request-type').val(type);
-			$('#request-product-image').html('<img src="'+$button.data('src')+'">');
+			if(type!='request') {
+				$('#request-product-image').html('<img src="'+$button.data('src')+'">');
+			}
 			
 		}).on('hidden.bs.modal', function (event) {
 

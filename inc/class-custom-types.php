@@ -3,6 +3,15 @@ namespace Nha88;
 
 class Custom_Types {
 
+	public static function hide_tags_from_quick_edit($show_in_quick_edit, $taxonomy_name, $post_type) {
+
+		if($taxonomy_name=='customer' && $post_type=='product') {
+			$show_in_quick_edit = false;
+		}
+
+		return $show_in_quick_edit;
+	}
+
 	public static function _theme_action_register_post_status() {
 		register_post_status( 'cancel', array(
 			'label'                     => 'Đã hủy',
@@ -270,12 +279,14 @@ class Custom_Types {
 			*/
 			$wp_taxonomies['category']->public = false;
 			$wp_taxonomies['category']->show_ui = false;
+			$wp_taxonomies['category']->show_in_nav_menus = false;
 			$wp_taxonomies['category']->rewrite = false;
 		}
 
 		if( isset($wp_taxonomies['post_tag']) ) {
 			$wp_taxonomies['post_tag']->public = false;
 			$wp_taxonomies['post_tag']->show_ui = false;
+			$wp_taxonomies['post_tag']->show_in_nav_menus = false;
 			$wp_taxonomies['post_tag']->rewrite = false;
 		}
 	}
