@@ -56,6 +56,8 @@ class Theme {
 		add_action( 'the_post', ['\Nha88\Custom_Types', '_setup_loop_custom_type'], 10 );
 
 		//add_action( 'terms_clauses', ['\Nha88\Custom_Types', '_setup_term_default_sort'], 10, 3 );
+
+		add_filter( 'quick_edit_show_taxonomy', ['\Nha88\Custom_Types', 'hide_tags_from_quick_edit'], 10, 3 );
 	}
 
 	private function hooks_assets() {
