@@ -69,7 +69,8 @@ class Assets {
 		$data = [
 			'home_url'=>esc_url(home_url()), 
 			'ajax_url'=>esc_url(admin_url('admin-ajax.php')),
-			'sitekey'=>$theme_setting->recaptcha_keys['sitekey'], 
+			'cf_turnstile_key'=>$theme_setting->get('cf_turnstile_key'),
+			'sitekey'=>$theme_setting->recaptcha_keys['sitekey'],
 			'popup_content_timeout'=>absint($theme_setting->get('popup_content_timeout')), 
 			'is_user_logged_in' => (is_user_logged_in())?1:0,
 			'preview' => (isset($_GET['preview']))?1:0,

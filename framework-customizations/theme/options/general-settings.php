@@ -99,6 +99,14 @@ $options = array(
 				'type'  => 'text',
 				'value' => ''
 			),
+			'cf_turnstile_key' => array(
+				'label' => __( 'Turnstile key' ),
+				'type'  => 'text',
+			),
+			'cf_turnstile_secret' => array(
+				'label' => __( 'Turnstile secret' ),
+				'type'  => 'text',
+			),
 		),
 	),
 );
