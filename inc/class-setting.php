@@ -35,6 +35,35 @@ final class Setting {
 		$this->recaptcha_keys = ['sitekey'=>$sitekey,'secretkey'=>$secretkey, 'ctf7'=>$ctf7_has_recaptcha];
 	}
 
+	public function cf_captcha_verify($token) {
+		// Get Turnstile Keys from Settings
+		$key = sanitize_text_field(fw_get_db_settings_option('cf_turnstile_key'));
+		$secret = sanitize_text_field(fw_get_db_settings_option('cf_turnstile_secret'));
+
+		if ($key && $secret) {
+
+			$headers = array(
+				'body' => [
+					'secret' => $secret,
+					'response' => $token
+				]
+			);
+			$verify = wp_remote_post('https://challenges.cloudflare.com/turnstile/v0/siteverify', $headers);
+			$verify = wp_remote_retrieve_body($verify);
+			$response = json_decode($verify);
+
+			//wp_mail( 'qqngoc2988@gmail.com', $_SERVER['HTTP_HOST'].' cf captcha verify', json_encode( $response ), ['Content-Type: text/html; charset=UTF-8'] );
+
+			debug_log($response);
+
+			if($response->success) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public function recaptcha_verify($token, $score=0.5) {
 		$check_captcha = wp_remote_post(
 			"https://www.google.com/recaptcha/api/siteverify",
@@ -47,7 +76,7 @@ final class Setting {
 		);
 
 		$recaptcha_verify = json_decode(wp_remote_retrieve_body($check_captcha), true);
-		debug_log($recaptcha_verify);
+		//debug_log($recaptcha_verify);
 
 		if( boolval($recaptcha_verify["success"]) && $recaptcha_verify["score"] >= $score ) {
 		//if( (boolval($recaptcha_verify["success"]) && $recaptcha_verify["score"] >= $score) || WP_DEBUG) {

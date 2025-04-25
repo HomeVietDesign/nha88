@@ -59,7 +59,7 @@ class FW_Shortcode_Products extends FW_Shortcode
 
 		$product = new \Nha88\Product($product_id);
 
-		if($theme_setting->recaptcha_verify($token, 0.5)) {
+		if($theme_setting->cf_captcha_verify($token)) {
 			$token_ok = true;
 		} else {
 			$response['code'] = self::REQUEST_TOKEN_CODE;
@@ -451,6 +451,9 @@ class FW_Shortcode_Products extends FW_Shortcode
 						<div class="mb-3">
 							<div class="form-label mb-1">Điện thoại liên hệ</div>
 							<input type="tel" name="customer_tel" class="form-control" value="" required>
+						</div>
+						<div class="d-none">
+							<div id="cf-turnstile-order" class="cf-turnstile" data-sitekey="<?=esc_attr($theme_setting->get('cf_turnstile_key'))?>"></div>
 						</div>
 						<div class="mb-3">
 							<div id="request-response"></div>

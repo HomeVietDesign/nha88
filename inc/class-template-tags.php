@@ -323,6 +323,7 @@ class Template_Tags {
 				});
 			});
 		</script>
+		<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" defer></script>
 		<?php
 		$custom_script = $theme_setting->get('head_code', '');
 		if(''!=$custom_script) {

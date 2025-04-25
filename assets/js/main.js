@@ -67,13 +67,14 @@ window.addEventListener('DOMContentLoaded', function(){
 		});
 
 		let ajax_request = null;
-		function submit_request(token='') {
+		function submit_request() {
 			let $form = $('#frm-request')
 				,data = $form.serializeArray()
 				,$button = $form.find('[type="submit"]')
 				,$response = $('#request-response')
+				,token = $form.find('[name="cf-turnstile-response"]').val()
 				;
-			
+			//console.log(token);
 			$button.prop('disabled', true);
 
 			data.push({name:'token', value:token});
@@ -117,15 +118,7 @@ window.addEventListener('DOMContentLoaded', function(){
 			let $form = $(this);
 			$form.find('[type="submit"]').prop('disabled', true);
 
-			if(typeof grecaptcha != 'undefined') {
-				grecaptcha.ready(function() {
-					grecaptcha.execute(theme.sitekey, {action: 'request'}).then(function(token) {
-						submit_request(token);
-					}); // recaptcha execute
-				}); // recaptcha ready
-			} else {
-				submit_request('');
-			}
+			submit_request();
 
 			return false;
 		});
