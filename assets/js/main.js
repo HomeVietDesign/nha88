@@ -136,7 +136,7 @@ window.addEventListener('DOMContentLoaded', function(){
 		
 		$(".product-images-slider").owlCarousel({
 			items:1,
-			lazyLoad:true,
+			lazyLoad:false,
 			loop:true,
 			autoplay:false,
 			// autoHeight:true,

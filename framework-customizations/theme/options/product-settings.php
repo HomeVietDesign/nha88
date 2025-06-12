@@ -98,7 +98,7 @@ $options = array(
 			),
 			'product_price' => array(
 				'label' => 'Đơn giá',
-				'desc'  => '',
+				'desc'  => 'Đơn giá chung dùng để nhân với diện tích của công trình = Giá bán của công trình.',
 				'type'  => 'numeric',
 				'value' => 100000
 			),

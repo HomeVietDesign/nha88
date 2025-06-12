@@ -11,7 +11,6 @@ class Theme {
 	protected function __construct() {
 		add_action('after_switch_theme', [$this, 'theme_activation']);
 		add_action('switch_theme', [$this, 'theme_deactivation']);
-		//add_action('wp_loaded', [$this, 'init_account'], 0);
 		add_action('fw_init', [$this, 'setup_theme'] );
 		add_action('fw_init', [$this, 'includes'] );
 		add_action('fw_init', [$this, 'hooks'] );
@@ -187,29 +186,6 @@ class Theme {
 		);
 		return array_merge( $size_names, $new_sizes );
 	}
-
-	/*
-	public function init_account() {
-		global $account;
-		
-		if(isset($_COOKIE[ 'wp-postpass_' . COOKIEHASH ])) {
-			$accounts = get_terms(['taxonomy'=>'customer', 'hide_empty'=>false]);
-			if(is_array($accounts) && !empty($accounts)) {
-			    require_once ABSPATH . WPINC . '/class-phpass.php';
-			    $hasher = new \PasswordHash( 8, true );
-			    $hash = wp_unslash( $_COOKIE[ 'wp-postpass_' . COOKIEHASH ] );
-			    if ( str_starts_with( $hash, '$P$B' ) ) {
-			        foreach ($accounts as $key => $value) {
-			            if($hasher->CheckPassword( $value->name, $hash )) {
-			                $account = new \Nha88\Account($value);
-			                break;
-			            }
-			        }
-			    }
-			}
-		}
-	}
-	*/
 
 	public function theme_activation() {
 		/*

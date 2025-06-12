@@ -89,10 +89,11 @@ class Product extends Post {
 	public function get_price() {
 		global $theme_setting;
 
+		$price_factor = floatval($this->get('price_factor',0));
 		$area = floatval($this->get('frontage',0)) * floatval($this->get('depth',0));
 		$price = absint($theme_setting->get('product_price',0));
 		$sale = $this->get('sale', 'normal');
-		$value = $area*$price;
+		$value = ($price_factor>0) ? $price_factor*$area*$price : $area*$price;
 
 		if($value === 0) $sale = 'comingsoon';
 
