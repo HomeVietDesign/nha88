@@ -99,6 +99,33 @@ class Template_Tags {
 			</div>
 			<?php
 		}
+		?>
+		<div class="modal fade" id="modal-popup-detail" tabindex="-1">
+			<div class="modal-dialog modal-fullscreen">
+				<div class="modal-content rounded-0">
+					<div class="modal-body p-0">
+						<div class="row h-100 g-0">
+							<div id="detail-left" class="col-lg-7 col-xl-8 col-xxl-9 bg-body-secondary h-100 overflow-hidden">
+								<div class="detail-left-padding h-100">
+									<div class="h-100">
+										<div id="detail-images-carousel" class="owl-carousel owl-theme h-100"></div>
+									</div>
+								</div>
+							</div>
+							<div id="detail-right" class="col-lg-5 col-xl-4 col-xxl-3 h-100 overflow-hidden">
+								<div class="bg-light d-flex justify-content-end sticky-top">
+									<button type="button" class="btn-popup-close btn btn-danger rounded-0" data-bs-dismiss="modal" aria-label="Close"><span class="dashicons dashicons-no-alt"></span></button>
+								</div>
+								<div id="detail-info" class="overflow-y-auto p-3">
+									
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<?php
 		
 	}
 

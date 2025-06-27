@@ -22,6 +22,7 @@ class Theme {
 
 	public function hooks() {
 		$this->hooks_custom_types();
+		$this->hooks_api();
 		$this->hooks_assets();
 		$this->hooks_head();
 		$this->hooks_header();
@@ -92,6 +93,10 @@ class Theme {
 		add_action('widgets_init', ['\Nha88\Widgets', 'register_sidebars']);
 	}
 
+	private function hooks_api() {
+		add_action( 'rest_api_init', ['\Nha88\API', 'rest_api_init'] );
+	}
+
 	private function hooks_product() {
 		add_filter( 'the_title', ['\Nha88\Products', 'the_title'], 10, 2 );
 		add_filter( 'edit_post_link', ['\Nha88\Products', 'edit_post_link'] );
@@ -101,6 +106,7 @@ class Theme {
 	public function includes() {
 
 		include_once THEME_DIR.'/inc/class-custom-types.php';
+		include_once THEME_DIR.'/inc/class-api.php';
 
 		if(is_admin()) {
 			include_once THEME_DIR.'/inc/admin/class-admin.php';

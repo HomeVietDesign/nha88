@@ -70,13 +70,15 @@ global $post, $product, $theme_setting;
 			<div class="d-flex flex-wrap justify-content-center justify-content-lg-between align-items-center">
 				<div class="m-1"><?php echo $product->get_price_html(); ?></div>
 				<div class="product-actions d-flex flex-wrap justify-content-center">
+					<button type="button" class="btn btn-sm btn-success fw-bold m-1" data-bs-target="#modal-popup-detail" data-bs-toggle="modal" data-id="<?=$product->post->ID?>">Xem chi tiết</button>
 					<?php
+					/*
 					if(has_role('administrator') && $product->get('url_data_file')!='') {
 						?>
 						<a href="<?php echo esc_url($product->get('url_data_file')); ?>" class="btn btn-sm btn-secondary fw-bold m-1" target="_blank"><?php echo esc_html($theme_setting->get('upload_button_text', 'UP FILE 3D')); ?></a>
 						<?php
 					}
-
+					*/
 					?>
 					<!-- <button type="button" class="btn btn-sm btn-success fw-bold m-1 floor_plan_button" data-bs-target="#request-popup" data-bs-toggle="modal" data-src="<?=esc_url($product->get_image_src('large'))?>" data-id="<?=$product->post->ID?>" data-type="floor_plan" data-popup-title="<?php echo esc_attr($theme_setting->get('floor_plan_popup_title', 'ĐĂNG KÝ NHẬN MẶT BẰNG')); ?>"><?php echo esc_html($theme_setting->get('floor_plan_button_text', 'MẶT BẰNG')); ?></button>
 				

@@ -39,18 +39,21 @@ function wp_format_content($raw_string='') {
 	
 	$content = wp_kses_post( $raw_string );
 
+	$content = apply_block_hooks_to_content_from_post_object($content);
 	$content = do_blocks($content);
 	$content = wptexturize($content);
-	$content = convert_smilies($content);
-	$content = convert_chars($content);
-	$wp_embed->run_shortcode($content);
+
 	$content = wpautop($content);
 	$content = shortcode_unautop($content);
+	$content = $wp_embed->run_shortcode($content);
 	$content = prepend_attachment($content);
-	$content = wp_filter_content_tags($content);
-	$content = do_shortcode($content);
 	$content = wp_replace_insecure_home_url($content);
+	$content = capital_P_dangit($content);
+	$content = do_shortcode($content);
+	$content = wp_filter_content_tags($content);
 	$content = $wp_embed->autoembed($content);
+	$content = convert_smilies($content);
+	$content = convert_chars($content);
 
 	return $content;
 }

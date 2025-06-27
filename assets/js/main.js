@@ -209,26 +209,26 @@ window.addEventListener('DOMContentLoaded', function(){
 		});
 
 		// -----------------------------------------------------------
-		$('.logout-post-password').on('click', function(e){
-			e.preventDefault();
-			let $this = $(this),
-				url = $this.data('url');
+		// $('.logout-post-password').on('click', function(e){
+		// 	e.preventDefault();
+		// 	let $this = $(this),
+		// 		url = $this.data('url');
 
-			$.ajax({
-				url:theme.ajax_url+'?action=logout_post_password',
-				method:'GET',
-				data:{url:url},
-				beforeSend:function(){
-					$this.prop('disabled', true);
-				},
-				success:function(){
-					deleteCookie('wp-postpass_'+$this.data('hash'));
-					//$this.remove();
-					location.href = url;
-				}
-			});
+		// 	$.ajax({
+		// 		url:theme.ajax_url+'?action=logout_post_password',
+		// 		method:'GET',
+		// 		data:{url:url},
+		// 		beforeSend:function(){
+		// 			$this.prop('disabled', true);
+		// 		},
+		// 		success:function(){
+		// 			deleteCookie('wp-postpass_'+$this.data('hash'));
+		// 			//$this.remove();
+		// 			location.href = url;
+		// 		}
+		// 	});
 			
-		});
+		// });
 
 		let popped_popup_content = getCookie('popped_popup_content');
 		if($('#modal-popup').length>0 && theme.preview!='1' && !popped_popup_content) {
@@ -242,37 +242,37 @@ window.addEventListener('DOMContentLoaded', function(){
 			
 		}
 
-		function check_validity($form) {
-			let valid = true;
-			$form.find('input.wpcf7-form-control').each(function(index, el){
-				switch(el.type) {
-					case 'text':
-						if(el.validity.valueMissing || el.validity.tooLong) {
-							valid = false;
-						}
-						break;
-					case 'tel':
-						if(!check_input_phone_number(el.value)) {
-							valid = false;
-						}
-						break;
-				}
-			});
+		// function check_validity($form) {
+		// 	let valid = true;
+		// 	$form.find('input.wpcf7-form-control').each(function(index, el){
+		// 		switch(el.type) {
+		// 			case 'text':
+		// 				if(el.validity.valueMissing || el.validity.tooLong) {
+		// 					valid = false;
+		// 				}
+		// 				break;
+		// 			case 'tel':
+		// 				if(!check_input_phone_number(el.value)) {
+		// 					valid = false;
+		// 				}
+		// 				break;
+		// 		}
+		// 	});
 
-			return valid;
-		}
+		// 	return valid;
+		// }
 
-		$(document).on('keyup', 'input.wpcf7-form-control', function(e){
-			let $form = $(this).closest('form'),
-				$submit_button = $form.find('[type="submit"]');
+		// $(document).on('keyup', 'input.wpcf7-form-control', function(e){
+		// 	let $form = $(this).closest('form'),
+		// 		$submit_button = $form.find('[type="submit"]');
 
-			if(check_validity($form)) {
-				$submit_button.prop('disabled', false);
-			} else {
-				$submit_button.prop('disabled', true);
-			}
+		// 	if(check_validity($form)) {
+		// 		$submit_button.prop('disabled', false);
+		// 	} else {
+		// 		$submit_button.prop('disabled', true);
+		// 	}
 
-		});
+		// });
 
 		function set_vh_size() {
 			let vh = $(window).innerHeight();
@@ -348,5 +348,54 @@ window.addEventListener('DOMContentLoaded', function(){
 			$('#main-nav ul.sub-menu').removeClass('open');
 		});
 
+		let detail_carousel = null;
+		$('#modal-popup-detail').on('show.bs.modal', function (event) {
+			let $modal = $(this),
+				$button = $(event.relatedTarget),
+				id = parseInt($button.data('id')),
+				$detail_left = $('#detail-left'),
+				$detail_images_carousel = $('#detail-images-carousel'),
+				$detail_right = $('#detail-right'),
+				$detail_info = $('#detail-info');
+			
+			fetch('/wp-json/theme-api/detail_product', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ id: id })
+			}).then(response => {
+				if (!response.ok) {
+					throw new Error('Server response was not OK');
+				}
+				return response.json(); // chuyển về JSON
+			}).then(function(data){
+				// console.log(data['slider']);
+				// console.log(data['info']);
+
+				$detail_images_carousel.html(data['slider']);
+				detail_carousel = $detail_images_carousel.owlCarousel({
+					items:1,
+					loop:false,
+					// autoplay:true,
+					// autoplayTimeout:3000,
+					// autoplayHoverPause:true,
+					nav: true,
+					dots: false,
+					navText: ['<span class="dashicons dashicons-arrow-left"></span>','<span class="dashicons dashicons-arrow-right"></span>']
+				});
+
+				$detail_info.html(data['info']);
+			});
+			
+		}).on('hidden.bs.modal', function (event) {
+			let $modal = $(this),
+				$detail_info = $('#detail-info');
+
+			$detail_info.html('');
+			if(detail_carousel!=null) {
+				detail_carousel.trigger('destroy.owl.carousel')
+			}
+		});
 	});
 });

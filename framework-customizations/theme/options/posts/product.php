@@ -108,5 +108,19 @@ $options = [
 			),
         ]
     ],
-   
+   	
+   	// 'box_content' => [
+	// 	'context' => 'advanced',
+	// 	'title'   => 'Nội dung',
+	// 	'type'    => 'box',
+	// 	'options' => [
+	// 		'content' => [
+	// 			'type' => 'wp-editor',
+	// 			'label' => 'Mô tả sản phẩm',
+	// 			'size' => 'large',
+	// 			'editor_height' => '600'
+	// 		],
+			
+	// 	]
+	// ],
 ];
