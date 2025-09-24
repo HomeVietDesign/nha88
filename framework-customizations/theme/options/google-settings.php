@@ -5,7 +5,7 @@ if ( ! defined( 'FW' ) ) {
 
 $options = array(
 	'google' => array(
-    'type' => 'tab',
+    	'type' => 'tab',
 		'title' => __('Cài đặt google'),
 		'options' => array(
 			'recaptcha_key' => array(

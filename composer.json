@@ -1,6 +1,0 @@
-{
-    "require": {
-        "google/apiclient": "^2.18",
-        "deliciousbrains/wp-background-processing": "^1.4"
-    }
-}

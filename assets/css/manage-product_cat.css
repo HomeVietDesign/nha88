@@ -1,4 +1,5 @@
 #slug-description,
-#parent-description {
+.term-slug-wrap,
+.term-parent-wrap {
 	display: none;
 }

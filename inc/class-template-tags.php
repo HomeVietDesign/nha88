@@ -8,8 +8,90 @@ namespace Nha88;
 class Template_Tags {
 
 	public static function display_footer_html() {
-		add_action('wp_footer', [__CLASS__, 'site_footer'], 10);
-		add_action('wp_footer', [__CLASS__, 'footer_fixed'], 20);
+		global $popup;
+		if( !$popup ) {
+			add_action('wp_footer', [__CLASS__, 'site_footer'], 10);
+			add_action('wp_footer', [__CLASS__, 'footer_fixed'], 20);
+		}
+		add_action('wp_footer', [__CLASS__, 'modals'], 20);
+		add_action('wp_footer', [__CLASS__, 'request_product_modal']);
+	}
+
+	public static function request_product_modal() {
+		$turnstile_keys = \Nha88\Setting::get_turnstile_keys();
+		$request_type = array_keys(\Nha88\Setting::request_type());
+		?>
+		<div class="modal fade" id="request-product" tabindex="-1" role="dialog" aria-labelledby="request-product-label">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="request-product-label"><?php
+						foreach ($request_type as $key => $type) {
+							?>
+							<span class="modal-title-<?=esc_attr($type)?><?php echo ($key>0) ? ' hidden':''; ?>"><?=esc_html(fw_get_db_settings_option($type.'_popup_title', ''))?></span>
+							<?php
+						}
+						?></h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<form id="frm-request-product" class="modal-body" method="POST" action="">
+						<input type="hidden" id="request_type" name="request_type" data-default="<?php echo esc_html($request_type[0]); ?>" value="<?php echo esc_html($request_type[0]); ?>" required>
+						<input type="hidden" id="product_id" name="product_id" value="" required>
+						<div class="mb-3 popup-content" id="request-product-desc">
+						<?php
+						foreach ($request_type as $key => $type) {
+							?>
+							<div class="popup-content-<?=esc_attr($type)?><?php echo ($key>0) ? ' hidden':''; ?>"><?=wp_get_the_content(fw_get_db_settings_option($type.'_popup_content', ''))?></div>
+							<?php
+						}
+						?>
+						</div>
+						
+						<div class="mb-3">
+							<input type="text" id="customer_name" name="customer_name" maxlength="60" class="form-control" placeholder="Họ tên" required>
+							<div class="invalid-feedback"></div>
+						</div>
+						<div class="mb-3">
+							<input type="text" id="customer_phone" name="customer_phone" placeholder="Số điện thoại của bạn" class="form-control" aria-label="Số điện thoại của bạn" required>
+						</div>
+						
+						<?php if($turnstile_keys['sitekey']!='' && $turnstile_keys['secretkey']!='') { ?>
+						<div id="cf-turnstile-rp" class="cf-turnstile" data-sitekey="<?=esc_attr($turnstile_keys['sitekey'])?>" data-callback="cf_turnstile_rp_callback" data-error-callback="cf_turnstile_rp_error_callback" data-expired-callback="cf_turnstile_rp_expired_callback"></div>
+						<?php } ?>
+
+						<div class="mb-3">
+							<?php if($turnstile_keys['sitekey']!='' && $turnstile_keys['secretkey']!='') { ?>
+							<button type="submit" class="btn btn-lg btn-danger text-uppercase fw-bold text-yellow text-nowrap d-block w-100" id="request-product-submit" disabled>Kiểm tra bảo mật...</button>
+							<?php } else { ?>
+							<button type="submit" class="btn btn-lg btn-danger text-uppercase fw-bold text-yellow text-nowrap d-block w-100" id="request-product-submit">Bấm gửi đi</button>
+							<?php } ?>
+							
+							<div class="invalid-feedback"></div>
+						</div>
+						<div id="request-product-message"></div>
+						<div id="request-product-preview" class="position-relative"></div>
+					</form>
+				</div>
+			</div>
+		</div>
+		
+		<?php
+	}
+
+	public static function modals() {
+		global $popup;
+
+		$close_button_left = $popup*30;
+		?>
+		<div class="modal" id="modal-popup-content" tabindex="-1">
+			<div class="modal-dialog m-0">
+				<div class="modal-content rounded-0 border-0">
+					<button type="button" class="p-0 position-absolute close-button text-red z-3" data-bs-dismiss="modal" aria-label="Đóng lại" style="left:<?=$close_button_left?>px;"><span class="dashicons dashicons-no-alt"></span></button>
+					<div class="modal-body p-0"></div>
+				</div>
+			</div>
+		</div>
+		<?php
 	}
 
 	public static function footer_fixed() {
@@ -99,33 +181,18 @@ class Template_Tags {
 			</div>
 			<?php
 		}
-		?>
-		<div class="modal fade" id="modal-popup-detail" tabindex="-1">
-			<div class="modal-dialog modal-fullscreen">
-				<div class="modal-content rounded-0">
-					<div class="modal-body p-0">
-						<div class="row h-100 g-0">
-							<div id="detail-left" class="col-lg-7 col-xl-8 col-xxl-9 bg-body-secondary h-100 overflow-hidden">
-								<div class="detail-left-padding h-100">
-									<div class="h-100">
-										<div id="detail-images-carousel" class="owl-carousel owl-theme h-100"></div>
-									</div>
-								</div>
-							</div>
-							<div id="detail-right" class="col-lg-5 col-xl-4 col-xxl-3 h-100 overflow-hidden">
-								<div class="bg-light d-flex justify-content-end sticky-top">
-									<button type="button" class="btn-popup-close btn btn-danger rounded-0" data-bs-dismiss="modal" aria-label="Close"><span class="dashicons dashicons-no-alt"></span></button>
-								</div>
-								<div id="detail-info" class="overflow-y-auto p-3">
-									
-								</div>
-							</div>
-						</div>
+		if($theme_setting->get('popup_sale','')!='') {
+			?>
+			<div class="modal fade" id="modal-popup-sale" tabindex="-1">
+				<div class="modal-dialog modal-lg modal-dialog-centered">
+					<div class="modal-content rounded-0">
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						<div class="modal-body"><?php echo wp_format_content($theme_setting->get('popup_sale','')); ?></div>
 					</div>
 				</div>
 			</div>
-		</div>
-		<?php
+			<?php
+		}
 		
 	}
 
@@ -145,6 +212,13 @@ class Template_Tags {
 	}
 
 	public static function display_widgets() {
+		// Phân tích domain từ URL (loại bỏ schema, path)
+		$host = parse_url(home_url(), PHP_URL_HOST);
+
+		// Regex: bắt domain và loại trừ /wp-admin
+		$regex = '/^https?:\/\/(?:www\.)?' . preg_quote($host, '/') . '(?!\/(wp-admin|wp-content)).*$/i';
+
+		ob_start();
 		?>
 		<div class="site-footer-inner container-xl">
 			<div class="row">
@@ -166,6 +240,108 @@ class Template_Tags {
 			</div>
 		</div>
 		<?php
+		$dom_content = str_get_html(ob_get_clean());
+		if($dom_content) {
+			foreach($dom_content->find('a') as $element) {
+				//if(preg_match($regex, $element->href)) {
+					$element->setAttribute('class', trim($element->class . ' popup'));
+				//}
+			}
+		}
+		echo (string)$dom_content;
+
+	}
+
+	public static function youtube_api() {
+		?>
+		<script type="text/javascript" id="youtube-video-api-scripts" data-no-optimize="1">
+			// This code loads the IFrame Player API code asynchronously.
+			var tag = document.createElement('script');
+
+			tag.src = "https://www.youtube.com/iframe_api";
+			var firstScriptTag = document.getElementsByTagName('script')[0];
+			firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+			
+			function onShortcodeYTPlayerReady(event) {
+				let settings = JSON.parse(event.target.g.dataset.settings);
+				if(settings.autoplay) {
+					event.target.mute();
+					event.target.playVideo();
+				}
+			}
+
+			function onShortcodeYTPlayerStateChange(event) {
+				//console.log(event);
+				let settings = JSON.parse(event.target.g.dataset.settings);
+				if(settings.loop && event.data == YT.PlayerState.ENDED) {
+					//event.target.mute();
+					event.target.playVideo();
+				}
+				if(event.data == YT.PlayerState.PAUSED || event.data == YT.PlayerState.UNSTARTED || event.data == YT.PlayerState.CUED) {
+					event.target.g.closest('.shortcode-youtube-video').classList.add('paused');
+					event.target.g.closest('.shortcode-youtube-video').classList.remove('playing');
+					event.target.g.closest('.shortcode-youtube-video').classList.remove('buffering');
+					event.target.g.closest('.shortcode-youtube-video').classList.remove('ended');
+				} else if(event.data == YT.PlayerState.PLAYING) {
+					event.target.g.closest('.shortcode-youtube-video').classList.remove('paused');
+					event.target.g.closest('.shortcode-youtube-video').classList.add('playing');
+					event.target.g.closest('.shortcode-youtube-video').classList.remove('buffering');
+					event.target.g.closest('.shortcode-youtube-video').classList.remove('ended');
+				} else if(event.data == YT.PlayerState.BUFFERING) {
+					event.target.g.closest('.shortcode-youtube-video').classList.remove('paused');
+					event.target.g.closest('.shortcode-youtube-video').classList.remove('playing');
+					event.target.g.closest('.shortcode-youtube-video').classList.add('buffering');
+					event.target.g.closest('.shortcode-youtube-video').classList.remove('ended');
+				} else if(event.data == YT.PlayerState.ENDED) {
+					event.target.g.closest('.shortcode-youtube-video').classList.remove('paused');
+					event.target.g.closest('.shortcode-youtube-video').classList.remove('playing');
+					event.target.g.closest('.shortcode-youtube-video').classList.remove('buffering');
+					event.target.g.closest('.shortcode-youtube-video').classList.add('ended');
+				}
+			}
+
+			function onYouTubeIframeAPIReady() {
+
+				let yt_players = [],
+					yt_frames = document.querySelectorAll('.yt-video-iframe');
+
+				if(yt_frames.length>0) {
+					yt_frames.forEach(function(el){
+						//console.log(JSON.parse(el.dataset.settings));
+						let player = new YT.Player(el.id, {
+							height: '1080',
+							width: '1920',
+							videoId: el.dataset.id,
+							playerVars: JSON.parse(el.dataset.settings),
+							events: {
+								'onReady': onShortcodeYTPlayerReady,
+								'onStateChange': onShortcodeYTPlayerStateChange
+							}
+						});
+						yt_players.push(player);
+					});
+				}
+
+				let shortcodePlays = document.querySelectorAll('.shortcode-youtube-video .play');
+				let shortcodePauses = document.querySelectorAll('.shortcode-youtube-video .pause');
+				shortcodePlays.forEach(function(play) {
+					play.addEventListener("click", function() {
+						//console.log('play');
+						//console.log(yt_players[play.dataset.index]);
+						yt_players[play.dataset.index].playVideo();
+					});
+				});
+				shortcodePauses.forEach(function(pause) {
+					pause.addEventListener("click", function() {
+						//console.log('pause');
+						//console.log(yt_players[pause.dataset.index]);
+						yt_players[pause.dataset.index].pauseVideo();
+					});
+				});
+
+			}
+		</script>
+		<?php
 	}
 
 	public static function footer_custom_scripts() {
@@ -177,7 +353,7 @@ class Template_Tags {
 	}
 
 	public static function site_footer() {
-	
+		
 		?>
 		<footer id="site-footer" class="py-5">
 		<?php self::display_widgets(); ?>
@@ -206,8 +382,21 @@ class Template_Tags {
 		}
 	}
 
+	public static function body_class($classes) {
+		global $popup;
+		if ( $popup ) {
+			$classes[] = 'has-popup';
+			$classes[] = 'popup-'.$popup;
+		}
+
+		return $classes;
+	}
+
 	public static function header_html() {
-		add_action('wp_body_open', [__CLASS__, 'site_header'], 10);
+		global $popup;
+		if( !$popup ) {
+			add_action('wp_body_open', [__CLASS__, 'site_header'], 10);
+		}
 	}
 
 	public static function primary_menu() {
@@ -224,6 +413,7 @@ class Template_Tags {
 		}
 
 		if($display_menu=='yes') {
+
 			$obj_menu = ($menu) ? wp_get_nav_menu_object( $menu[0] ): false;
 			if($obj_menu) {
 				$nav_menu = wp_nav_menu([
@@ -247,7 +437,6 @@ class Template_Tags {
 					'items_wrap' => '<ul class="%2$s">%3$s</ul>',
 				]);
 			}
-
 			
 			if($nav_menu!='') {
 				?>
@@ -290,8 +479,28 @@ class Template_Tags {
 		
 		?>
 		<header id="site-header" class="position-sticky">
-		<?php self::primary_menu(); ?>
-		<?php self::secondary_menu(); ?>
+		<?php
+		ob_start();
+		self::primary_menu();
+		self::secondary_menu();
+
+		$html = str_get_html(ob_get_clean());
+		if($html) {
+			// Phân tích domain từ URL (loại bỏ schema, path)
+			$host = parse_url(home_url(), PHP_URL_HOST);
+
+			// Regex: bắt domain và loại trừ /wp-admin
+			$regex = '/^https?:\/\/(?:www\.)?' . preg_quote($host, '/') . '(?!\/(wp-admin|wp-content)).*$/i';
+
+			foreach($html->find('a') as $element) {
+				//if(preg_match($regex, $element->href)) {
+					$element->setAttribute('class', trim($element->class . ' popup'));
+				//}
+			}
+		}
+		echo (string)$html;
+
+		?>
 		</header>
 		<?php
 		
@@ -305,16 +514,37 @@ class Template_Tags {
 		}
 	}
 
-	public static function head_youtube_scripts() {
+	public static function head_product_scripts() {
+		$captcha = \Nha88\Setting::has_turnstile();
+		if($captcha) {
 		?>
 		<script>
-			// This code loads the IFrame Player API code asynchronously.
-			var tag = document.createElement('script');
-			tag.src = "https://www.youtube.com/iframe_api";
-			var firstScriptTag = document.getElementsByTagName('script')[0];
-			firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-		 </script>
+			function cf_turnstile_rp_callback(token) { // rp = request product
+				let $submit_button = jQuery('#request-product-submit');
+				$submit_button.prop('disabled', false);
+				$submit_button.text('Bấm gửi đi');
+			}
+
+			function cf_turnstile_rp_error_callback() {
+				let $submit_button = jQuery('#request-product-submit');
+				// alert('Kiểm tra SPAM thất bại!');
+				// window.location.reload();
+				$submit_button.prop('disabled', true);
+			}
+
+			function cf_turnstile_rp_expired_callback() {
+				let $submit_button = jQuery('#request-product-submit');
+				// alert('Kiểm tra SPAM hết hạn!');
+				// window.location.reload();
+				$submit_button.prop('disabled', true);
+			}
+
+			document.addEventListener('requestProduct', function(e){
+				turnstile.reset();
+			});
+		</script>
 		<?php
+		}
 	}
 
 	public static function head_scripts() {
@@ -350,8 +580,13 @@ class Template_Tags {
 				});
 			});
 		</script>
-		<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" defer></script>
 		<?php
+		$captcha = \Nha88\Setting::has_turnstile();
+		if($captcha) {
+			?>
+			<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" defer></script>
+			<?php
+		}
 		$custom_script = $theme_setting->get('head_code', '');
 		if(''!=$custom_script) {
 			echo $custom_script;

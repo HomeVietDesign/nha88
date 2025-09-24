@@ -2,30 +2,41 @@
 	die('Forbidden');
 }
 
-$options = [
-	'number' => [
-		'label' => 'Số lượng hiển thị',
-		'desc' => 'Số sản phẩm hiển thị trên 1 phân trang',
-		'value' => 8,
-		'type' => 'numeric',
-		'negative' => true,
+$options = array(
+	'product_cat_in' => [
+		'label' => 'Danh mục lựa chọn',
+		'type'  => 'multi-select',
+		'population' => 'taxonomy',
+		'source' => 'product_cat',
+		'limit' => 100,
 	],
-	'product_cat' => array(
-		'label' => 'Danh mục',
-		'desc' => '',
-		'type' => 'multi-select',
-		'population' => 'taxonomy',
-		'source' => 'product_cat',
-		'limit' => 100,
-	),
-
-	'product_cat_exclude' => array(
+	'product_cat_ex' => [
 		'label' => 'Danh mục loại trừ',
-		'desc' => '',
-		'type' => 'multi-select',
+		'type'  => 'multi-select',
 		'population' => 'taxonomy',
 		'source' => 'product_cat',
 		'limit' => 100,
+	],
+	'items' => [
+		'type'  => 'numeric',
+	    'value' => -1,
+		'integer' => true,
+		'negative' => true,
+		'label' => 'Số lượng hiển thị',
+		'desc' => 'Giá trị "-1" là hiển thị tất cả.',
+	],
+	'popup' => array(
+		'label' => 'Mở popup chi tiết?',
+		'desc'  => '',
+		'value'  => 'yes',
+		'type'  => 'switch',
+		'left-choice' => array(
+			'value' => 'no',
+			'label' => 'Không',
+		),
+		'right-choice' => array(
+			'value' => 'yes',
+			'label' => 'Có',
+		),
 	),
-
-];
+);

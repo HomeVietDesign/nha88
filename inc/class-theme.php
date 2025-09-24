@@ -23,25 +23,35 @@ class Theme {
 	public function hooks() {
 		$this->hooks_custom_types();
 		$this->hooks_api();
+		$this->hooks_ads();
 		$this->hooks_assets();
 		$this->hooks_head();
 		$this->hooks_header();
 		$this->hooks_body();
 		$this->hooks_footer();
 		$this->hooks_widget();
-		$this->hooks_product();
+		//$this->hooks_product();
 		$this->hooks_ajax();
 		$this->hooks_background_process();
+		$this->hooks_wpcf7();
 
+	}
+
+	private function hooks_wpcf7() {
+		add_action( 'wpcf7_before_send_mail', ['\Nha88\WPCF7', 'wpcf7_before_send_mail'] );
+		add_filter( 'wpcf7_posted_data_tel*', ['\Nha88\WPCF7', 'wpcf7_convert_phone_number'], 10, 3 );
 	}
 
 	private function hooks_background_process() {
-		add_action('purchase_process', ['\Nha88\Background_Process', 'purchase_process']);
+		add_action('add_product_order', ['\Nha88\Background_Process', 'add_product_order']);
 	}
 
 	private function hooks_ajax() {
-		add_action( 'wp_ajax_logout_post_password', ['\Nha88\Ajax', 'logout_post_password'] );
-		add_action( 'wp_ajax_nopriv_logout_post_password', ['\Nha88\Ajax', 'logout_post_password'] );
+		// add_action( 'wp_ajax_logout_post_password', ['\Nha88\Ajax', 'logout_post_password'] );
+		// add_action( 'wp_ajax_nopriv_logout_post_password', ['\Nha88\Ajax', 'logout_post_password'] );
+
+		add_action('wp_ajax_request_product', ['\Nha88\Ajax', 'request_product']);
+		add_action('wp_ajax_nopriv_request_product', ['\Nha88\Ajax', 'request_product']);
 	}
 
 	private function hooks_custom_types() {
@@ -57,18 +67,21 @@ class Theme {
 
 		//add_action( 'terms_clauses', ['\Nha88\Custom_Types', '_setup_term_default_sort'], 10, 3 );
 
-		add_filter( 'quick_edit_show_taxonomy', ['\Nha88\Custom_Types', 'hide_tags_from_quick_edit'], 10, 3 );
+		//add_filter( 'quick_edit_show_taxonomy', ['\Nha88\Custom_Types', 'hide_tags_from_quick_edit'], 10, 3 );
+
+		add_filter( 'get_pages_query_args', ['\Nha88\Custom_Types', 'wp_dropdown_pages_args'] );
+		add_action( 'pre_get_posts', ['\Nha88\Custom_Types', 'pre_get_posts'] );
+		add_filter( 'template_include', ['\Nha88\Custom_Types', 'product_front_page_template'], 999 );
 	}
 
 	private function hooks_assets() {
 		add_action('wp_enqueue_scripts', ['\Nha88\Assets', 'enqueue_styles'], 50);
 		add_action('wp_enqueue_scripts', ['\Nha88\Assets', 'enqueue_scripts'], 50);
-		add_action('wp_enqueue_scripts', ['\Nha88\Assets', 'recaptcha_script'], 21);
 	}
 
 	private function hooks_head() {
 		add_action('wp_head', ['\Nha88\Template_Tags', 'head_scripts'], 50);
-		add_action('wp_head', ['\Nha88\Template_Tags', 'head_youtube_scripts'], 10);
+		add_action('wp_head', ['\Nha88\Template_Tags', 'head_product_scripts'], 50);
 		add_action('wp_head', ['\Nha88\Template_Tags', 'noindex'], 10);
 	}
 
@@ -77,6 +90,7 @@ class Theme {
 	}
 
 	private function hooks_body() {
+		add_filter('body_class', ['\Nha88\Template_Tags', 'body_class']);
 		add_action('wp_body_open', ['\Nha88\Template_Tags', 'body_open_custom_code'], 5);
 		add_action('wp_body_open', ['\Nha88\Template_Tags', 'site_body_open'], 30);
 		add_action('wp_footer', ['\Nha88\Template_Tags', 'site_body_close'], 5);
@@ -86,27 +100,38 @@ class Theme {
 		add_action('template_redirect', ['\Nha88\Template_Tags', 'display_footer_html']);
 		add_action('wp_footer', ['\Nha88\Template_Tags', 'footer_custom_scripts'], 100);
 		add_filter('the_password_form', ['\Nha88\Template_Tags', 'the_password_form'], 10, 2);
-		
+		add_action('wp_footer', ['\Nha88\Template_Tags', 'youtube_api'], 100);
 	}
 
 	private function hooks_widget() {
 		add_action('widgets_init', ['\Nha88\Widgets', 'register_sidebars']);
 	}
 
+	private function hooks_ads() {
+		//add_action( 'wp_footer', ['\Nha88\Ads', 'inject_ads_listener'], 10 );
+		add_filter( 'request_product', ['\Nha88\Ads', 'track_request_product'] );
+		add_filter( 'buynow', ['\Nha88\Ads', 'track_request_product'] );
+		add_action( 'wpcf7_submit', ['\Nha88\Ads', 'track_wpcf7_submit'], 10, 2 );
+		
+		add_action( 'purchase', ['\Nha88\Ads', 'track_purchase'] );
+	}
+
 	private function hooks_api() {
-		add_action( 'rest_api_init', ['\Nha88\API', 'rest_api_init'] );
+		//add_action( 'rest_api_init', ['\Nha88\API', 'rest_api_init'] );
 	}
 
 	private function hooks_product() {
-		add_filter( 'the_title', ['\Nha88\Products', 'the_title'], 10, 2 );
-		add_filter( 'edit_post_link', ['\Nha88\Products', 'edit_post_link'] );
-		add_filter( 'posts_clauses', ['\Nha88\Products', 'id_search'], 10, 2 );
+		// add_filter( 'the_title', ['\Nha88\Products', 'the_title'], 10, 2 );
+		// add_filter( 'edit_post_link', ['\Nha88\Products', 'edit_post_link'] );
+		// add_filter( 'posts_clauses', ['\Nha88\Products', 'id_search'], 10, 2 );
 	}
 
 	public function includes() {
 
+		include_once THEME_DIR.'/inc/simplehtmldom/simple_html_dom.php';
 		include_once THEME_DIR.'/inc/class-custom-types.php';
 		include_once THEME_DIR.'/inc/class-api.php';
+		include_once THEME_DIR.'/inc/class-ads.php';
 
 		if(is_admin()) {
 			include_once THEME_DIR.'/inc/admin/class-admin.php';
@@ -115,24 +140,27 @@ class Theme {
 		include_once THEME_DIR.'/inc/class-setting.php';
 		include_once THEME_DIR.'/inc/class-assets.php';
 		include_once THEME_DIR.'/inc/class-post.php';
-		include_once THEME_DIR.'/inc/class-term.php';
-		//include_once THEME_DIR.'/inc/class-account.php';
 		include_once THEME_DIR.'/inc/class-product.php';
-		include_once THEME_DIR.'/inc/class-product-price.php';
+		include_once THEME_DIR.'/inc/class-term.php';
 		include_once THEME_DIR.'/inc/class-template-tags.php';
 		include_once THEME_DIR.'/inc/class-walker-primary-menu.php';
 		include_once THEME_DIR.'/inc/class-walker-secondary-menu.php';
 		include_once THEME_DIR.'/inc/class-widgets.php';
-		include_once THEME_DIR.'/inc/class-products.php';
 		include_once THEME_DIR.'/inc/class-ajax.php';
-		include_once THEME_DIR.'/inc/class-purchase.php';
 		include_once THEME_DIR.'/inc/class-background-process.php';
-		//include_once THEME_DIR.'/inc/class-purchase-process.php';
+		include_once THEME_DIR.'/inc/wpcf7/class-wpcf7.php';
 		
 		$GLOBALS['theme_setting'] = \Nha88\Setting::get_instance();
 	}
 
 	public function setup_theme() {
+		global $popup;
+		$popup = isset($_REQUEST['popup']) ? absint($_REQUEST['popup']) : 0;
+
+		if($popup):
+			show_admin_bar( false );
+		endif;
+
 		// không dùng block editor
 		add_filter('use_widgets_block_editor', '__return_false');
 		add_filter('use_block_editor_for_post_type', '__return_false', 10);

@@ -3,149 +3,22 @@ window.addEventListener('DOMContentLoaded', function(){
 	const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
 
 	jQuery(function($){
-		// products
-		function check_input_phone_number(p) {
-			const patt = /^(\+?\d{1,3}[-.\s]?)?(\(?\d{3}\)?[-.\s]?)?\d{3}[-.\s]?\d{4}$/;
-			return patt.test(p);
-		}
+		$(document).on('click', 'a.popup', function(e){
+			e.preventDefault();
 
-		$('#request-popup').on('show.bs.modal', function (event) {
-			let $modal = $(this),
-				$button = $(event.relatedTarget),
-				$form = $('#frm-request'),
-				id = parseInt($button.data('id')),
-				title = $button.data('popup-title'),
-				type = $button.data('type');
+			let $a = $(this),
+				i=getParam('popup'),
+				$modal = $('#modal-popup-content'),
+				src = add_query_url('popup', (i==null)?1:parseInt(i)+1, $a.attr('href'));
 			
-			$('#request-popup-label').text(title);
-			$('#request-product-id').val(id);
-			$('#request-type').val(type);
-			if(type!='request') {
-				$('#request-product-image').html('<img src="'+$button.data('src')+'">');
-			}
-			
-		}).on('hidden.bs.modal', function (event) {
+			$modal.find('.modal-body').html('<iframe src="'+src+'" style="border:0;">');
 
-			$('#request-popup-label').text('');
-			$('#request-product-id').val('');
-			$('#request-type').val('');
-			$('#request-response').html('');
-			$('#request-product-image').html('');
-			$('#request-submit').prop('disabled', true);
-
-
-		});
-
-		function checkRequestFormValidity() {
-			let valid = true;
-			$('#request-popup').find('input').each(function(index, el){
-				let $el = $(el);
-				switch(el.type) {
-					case 'text':
-						if(el.validity.valueMissing || el.validity.tooLong) {
-							valid = false;
-						}
-						break;
-					case 'tel':
-						if(el.validity.valueMissing || !check_input_phone_number(el.value)) {
-							valid = false;
-						}
-						break;
-				}
-
-			});
-
-			return valid;
-		}
-
-		$(document).on('input', '#request-popup input', function() {
-			if(checkRequestFormValidity()) {
-				$('#request-submit').prop('disabled', false);
-			} else {
-				$('#request-submit').prop('disabled', true);
-			}
-		});
-
-		let ajax_request = null;
-		function submit_request() {
-			let $form = $('#frm-request')
-				,data = $form.serializeArray()
-				,$button = $form.find('[type="submit"]')
-				,$response = $('#request-response')
-				,token = $form.find('[name="cf-turnstile-response"]').val()
-				;
-			//console.log(token);
-			$button.prop('disabled', true);
-
-			data.push({name:'token', value:token});
-			data.push({name:'url', value:window.location.href});
-
-			$.ajax({
-				url: theme.ajax_url+'?action=request',
-				type: 'POST',
-				data: data,
-				dataType: 'json',
-				beforeSend: function() {
-					$response.html('<p class="text-primary">Đang gửi yêu cầu...</p>');
-				},
-				success: function(response) {
-					const eventRequest = new CustomEvent('request', {
-						bubbles: true,
-						detail: { id:response.data.id, name:response.data.name, content_type:response.data.content_type, phone:response.data.phone, fb_pxl_code:response.fb_pxl_code }
-					});
-
-					if(response['code']==1) {
-						event.target.dispatchEvent(eventRequest);
-					} else {
-						$button.prop('disabled', false);
-					}
-
-					$response.html(response['msg']);
-				},
-				error: function(xhr) {
-					$response.html('<p class="text-danger">Có lỗi xảy ra. Xin vui lòng thử lại.</p>');
-					$button.prop('disabled', false);
-				},
-				complete: function() {
-					$form.trigger('reset');
-				}
-			});
-		
-		}
-
-		$('#frm-request').on('submit', function(event){
-			event.preventDefault();
-			let $form = $(this);
-			$form.find('[type="submit"]').prop('disabled', true);
-
-			submit_request();
+			$modal.modal('show');
 
 			return false;
 		});
 
-		/*
-		$(document).on('click', '.floor_plan_button, .interior_button', function(e){
-			let pswp = new PhotoSwipe({
-				dataSource: $(this).data('images'),
-				//showHideAnimationType: 'none',
-				index: 0
-			});
-			pswp.init();
-		});
-		*/
-		
-		$(".product-images-slider").owlCarousel({
-			items:1,
-			lazyLoad:false,
-			loop:true,
-			autoplay:false,
-			// autoHeight:true,
-			autoplayTimeout:3000,
-			autoplayHoverPause:true,
-			nav:true,
-			dots:false
-		});
-		
+		// products
 		function load_products($section, paged=1, scrolltop=true) {
 			let $list_el = $section.find('.list-products'),
 				$pagination_links_el = $section.find('.product-paginate-links'),
@@ -208,27 +81,6 @@ window.addEventListener('DOMContentLoaded', function(){
 			load_products($section, paged);
 		});
 
-		// -----------------------------------------------------------
-		// $('.logout-post-password').on('click', function(e){
-		// 	e.preventDefault();
-		// 	let $this = $(this),
-		// 		url = $this.data('url');
-
-		// 	$.ajax({
-		// 		url:theme.ajax_url+'?action=logout_post_password',
-		// 		method:'GET',
-		// 		data:{url:url},
-		// 		beforeSend:function(){
-		// 			$this.prop('disabled', true);
-		// 		},
-		// 		success:function(){
-		// 			deleteCookie('wp-postpass_'+$this.data('hash'));
-		// 			//$this.remove();
-		// 			location.href = url;
-		// 		}
-		// 	});
-			
-		// });
 
 		let popped_popup_content = getCookie('popped_popup_content');
 		if($('#modal-popup').length>0 && theme.preview!='1' && !popped_popup_content) {
@@ -241,38 +93,6 @@ window.addEventListener('DOMContentLoaded', function(){
 			}, 1000*parseInt(theme.popup_content_timeout));
 			
 		}
-
-		// function check_validity($form) {
-		// 	let valid = true;
-		// 	$form.find('input.wpcf7-form-control').each(function(index, el){
-		// 		switch(el.type) {
-		// 			case 'text':
-		// 				if(el.validity.valueMissing || el.validity.tooLong) {
-		// 					valid = false;
-		// 				}
-		// 				break;
-		// 			case 'tel':
-		// 				if(!check_input_phone_number(el.value)) {
-		// 					valid = false;
-		// 				}
-		// 				break;
-		// 		}
-		// 	});
-
-		// 	return valid;
-		// }
-
-		// $(document).on('keyup', 'input.wpcf7-form-control', function(e){
-		// 	let $form = $(this).closest('form'),
-		// 		$submit_button = $form.find('[type="submit"]');
-
-		// 	if(check_validity($form)) {
-		// 		$submit_button.prop('disabled', false);
-		// 	} else {
-		// 		$submit_button.prop('disabled', true);
-		// 	}
-
-		// });
 
 		function set_vh_size() {
 			let vh = $(window).innerHeight();
@@ -348,54 +168,261 @@ window.addEventListener('DOMContentLoaded', function(){
 			$('#main-nav ul.sub-menu').removeClass('open');
 		});
 
-		let detail_carousel = null;
-		$('#modal-popup-detail').on('show.bs.modal', function (event) {
-			let $modal = $(this),
-				$button = $(event.relatedTarget),
-				id = parseInt($button.data('id')),
-				$detail_left = $('#detail-left'),
-				$detail_images_carousel = $('#detail-images-carousel'),
-				$detail_right = $('#detail-right'),
-				$detail_info = $('#detail-info');
-			
-			fetch('/wp-json/theme-api/detail_product', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({ id: id })
-			}).then(response => {
-				if (!response.ok) {
-					throw new Error('Server response was not OK');
-				}
-				return response.json(); // chuyển về JSON
-			}).then(function(data){
-				// console.log(data['slider']);
-				// console.log(data['info']);
+		if($('body').hasClass('single-product') || $('body').hasClass('product-template-default')) {
 
-				$detail_images_carousel.html(data['slider']);
-				detail_carousel = $detail_images_carousel.owlCarousel({
-					items:1,
-					loop:false,
-					// autoplay:true,
-					// autoplayTimeout:3000,
-					// autoplayHoverPause:true,
-					nav: true,
-					dots: false,
-					navText: ['<span class="dashicons dashicons-arrow-left"></span>','<span class="dashicons dashicons-arrow-right"></span>']
-				});
+			var sync1 = $(".single-product-images .gallery .slider");
+			var sync2 = $(".single-product-images .gallery .navigation-thumbs");
 
-				$detail_info.html(data['info']);
-			});
-			
-		}).on('hidden.bs.modal', function (event) {
-			let $modal = $(this),
-				$detail_info = $('#detail-info');
-
-			$detail_info.html('');
-			if(detail_carousel!=null) {
-				detail_carousel.trigger('destroy.owl.carousel')
+			var thumbnailItemClass = '.owl-item';
+			var args = {
+				// video:false,
+				items:1,
+				lazyLoad:true,
+				loop:false,
+				autoplay:true,
+				autoHeight:true,
+				autoplayTimeout:3000,
+				autoplayHoverPause:true,
+				nav: true,
+				dots: false
+			};
+			if(sync1.hasClass('has-video')) {
+				args.autoplay = false;
 			}
+			var slides = sync1.owlCarousel(args).on('changed.owl.carousel', syncPosition).on('loaded.owl.lazy', function(e){
+				let owl = $(this);
+			});
+
+			function syncPosition(el) {
+				$owl_slider = $(this).data('owl.carousel');
+				var loop = $owl_slider.options.loop;
+
+				if(loop){
+					var count = el.item.count-1;
+					var current = Math.round(el.item.index - (el.item.count/2) - .5);
+					if(current < 0) {
+						current = count;
+					}
+					if(current > count) {
+						current = 0;
+					}
+				}else{
+					var current = el.item.index;
+				}
+
+				var owl_thumbnail = sync2.data('owl.carousel');
+				var itemClass = "." + owl_thumbnail.options.itemClass;
+
+
+				var thumbnailCurrentItem = sync2
+				.find(itemClass)
+				.removeClass("synced")
+				.eq(current);
+
+				thumbnailCurrentItem.addClass('synced');
+
+				if (!thumbnailCurrentItem.hasClass('active')) {
+					var duration = 300;
+					sync2.trigger('to.owl.carousel',[current, duration, true]);
+				}   
+			}
+
+			var thumbs = sync2.owlCarousel({
+				items:4,
+				lazyLoad:true,
+				loop:false,
+				margin:10,
+				autoplay:false,
+				nav: true,
+				dots: false,
+				// responsive : {
+				// 	0 : {
+				// 		items: 2
+				// 	},
+				// 	768 : {
+				// 		items: 4
+				// 	}
+				// },
+				onInitialized: function (e) {
+					var thumbnailCurrentItem =  $(e.target).find(thumbnailItemClass).eq(this._current);
+					thumbnailCurrentItem.addClass('synced');
+				}
+			})
+			.on('click', thumbnailItemClass, function(e) {
+				e.preventDefault();
+				var duration = 300;
+				var itemIndex =  $(e.target).parents(thumbnailItemClass).index();
+				sync1.trigger('to.owl.carousel',[itemIndex, duration, true]);
+			}).on("changed.owl.carousel", function (el) {
+				var number = el.item.index;
+				$owl_slider = sync1.data('owl.carousel');
+				$owl_slider.to(number, 100, true);
+			});
+		}
+
+		var lightbox = new PhotoSwipeLightbox({
+			gallery: '.pswp-gallery',
+			children: 'a',
+			pswpModule: PhotoSwipe 
 		});
+		lightbox.init();
+
+		/* xử lý form đặt mua hồ sơ */
+
+		function check_input_phone_number(p) {
+			const patt = /^(\+?\d{1,3}[-.\s]?)?(\(?\d{3}\)?[-.\s]?)?\d{3}[-.\s]?\d{4}$/;
+			return patt.test(p);
+		}
+
+		let ajax_rp = null;
+		$('#frm-request-product').on('submit', function(event){
+			event.preventDefault();
+			
+			let submit_button = $('#request-product-submit'),
+				type = $('#request_type').val(),
+				id = parseInt($('#product_id').val()),
+				phone = $('#customer_phone').val(),
+				phone_number = '',
+				name = $('#customer_name').val(),
+				token = $('#frm-request-product [name="cf-turnstile-response"]').val(),
+
+				feedback_name = $('#customer_name').next('.invalid-feedback'),
+				feedback_phone = $('#customer_phone').closest('.input-group').find('.invalid-feedback'),
+				validate_name = validate_phone = false, custom_value = '';
+
+			$('#request-product-message').html('');
+
+			if(id<=0) {
+				$('#customer_phone').addClass('is-invalid');
+				feedback_phone.html('Chưa lựa chọn sản phẩm!');
+			} else {
+				if(check_input_phone_number(phone)) {
+					validate_phone = true
+					$('#customer_phone').removeClass('is-invalid');
+					feedback_phone.html('');
+				} else {
+					$('#customer_phone').addClass('is-invalid');
+					feedback_phone.html('Số điện thoại không đúng!');
+				}
+
+				if(name!='') {
+					validate_name = true
+					$('#customer_name').removeClass('is-invalid');
+					feedback_name.html('');
+				} else {
+					$('#customer_name').addClass('is-invalid');
+					feedback_name.html('Tên không được trống');
+				}
+
+				if(validate_name && validate_phone){
+
+					if(phone.startsWith('0')) {
+						phone_number = "+84" + phone.slice(1, phone.length);
+					} else if(phone.startsWith('+84')) {
+						phone_number = phone;
+					} else if(phone.startsWith('84')) {
+						phone_number = "+"+phone;
+					} else {
+						phone_number = "+84" + phone;  
+					}
+
+					if(ajax_rp!=null) ajax_rp.abort();
+
+					ajax_rp = $.ajax({
+						url: theme.ajax_url,
+						type: 'post',
+						data: {
+							action: 'request_product',
+							type:type,
+							id:id,
+							name:name,
+							phone:phone_number,
+							url: window.btoa(window.location.href),
+							token:token
+						},
+						dataType: 'json',
+						beforeSend: function(xhr) {
+							submit_button.text('Đang gửi..');
+						},
+						success: function(response) {
+							
+							const eventRequest = new CustomEvent('requestProduct', {
+								bubbles: true,
+								detail: response
+							});
+
+							if(response.code==1) {
+								
+								event.target.dispatchEvent(eventRequest);
+							
+								$('#request-product-message').html('<div class="py-3 text-center text-success">'+response.msg+'</div>');
+
+								submit_button.text('Đã gửi');
+								submit_button.closest('form').trigger('reset');
+
+							} else {
+								submit_button.text('Đồng ý');
+								$('#request-product-message').html('<div class="py-3 text-center text-danger">'+response.msg+'</div>');
+							}
+							
+							
+						},
+						error: function() {
+							submit_button.text('Đồng ý');
+							$('#request-product-message').html('<div class="py-3 text-center text-danger">Có lỗi khi gửi! Vui lòng tải lại trang rồi thử lại. Hoặc liên hệ với ban quản trị về sự cố này.</div>');
+						},
+						complete: function() {
+							submit_button.prop('disabled', false);
+						}
+					});
+					
+
+				} else {
+					submit_button.prop('disabled', false);
+				}
+			}
+
+			return false;
+
+		}); // submit order
+
+		// chọn mẫu modal
+		$('#request-product').on('show.bs.modal', function (event) {
+			let modal = $(this),
+				button = $(event.relatedTarget),
+				type = button.data('type'),
+				id = button.data('id'),
+				src = button.data('src');
+
+			$('#request-product-label').find('.modal-title-'+type).removeClass('hidden').siblings().addClass('hidden');
+			$('#request-product-desc').find('.popup-content-'+type).removeClass('hidden').siblings().addClass('hidden');
+
+			$('#request_type').val(type);
+			$('#product_id').val(id);
+			
+			$('#request-product-preview').html('<img src="'+src+'">');
+			
+		}).on('hidden.bs.modal', function (e) {
+			
+			$('#customer_name').removeClass('is-invalid');
+			$('#customer_name').next('.invalid-feedback').html('');
+			$('#customer_phone').removeClass('is-invalid');
+			$('#customer_phone').next('.invalid-feedback').html('');
+
+			let type = $('#request_type').data('default');
+
+			$('#request_type').val(type);
+			$('#product_id').val('');
+
+			$('#request-product-label').find('.modal-title-'+type).removeClass('hidden').siblings().addClass('hidden');
+			$('#request-product-desc').find('.popup-content-'+type).removeClass('hidden').siblings().addClass('hidden');
+
+			$('#request-product-message').html('');
+			$('#request-product-preview').html('');
+			$('#request-product-submit').text('Đồng ý');
+	
+		});
+
+
 	});
 });

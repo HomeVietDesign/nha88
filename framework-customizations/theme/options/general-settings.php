@@ -72,33 +72,6 @@ $options = array(
 					),
 				),
 			),
-			'divider_popup_content' => array(
-				'label' => '',
-				'desc'  => '',
-				'type'  => 'html',
-				'html' => '<strong style="text-transform:uppercase;">Cài đặt popup nội dung tùy biến</strong>',
-				'size' => 'large',
-			),
-			'popup_content' => array(
-				'label' => 'Nội dung popup',
-				'desc'  => '',
-				'type'  => 'wp-editor',
-				'value' => '',
-				'size' => 'large',
-				'editor_height' => '600'
-			),
-			'popup_content_timeout' => array(
-				'label' => 'Thời gian mở popup (giây)',
-				'desc'  => '',
-				'type'  => 'numeric',
-				'value' => 120
-			),
-			'popup_content_button_text' => array(
-				'label' => 'Nhãn nút mở popup',
-				'desc'  => '',
-				'type'  => 'text',
-				'value' => ''
-			),
 			'cf_turnstile_key' => array(
 				'label' => __( 'Turnstile key' ),
 				'type'  => 'text',

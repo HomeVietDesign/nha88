@@ -25,8 +25,12 @@ class API {
 			ob_start();
 			if($product->get('images')) {
 				foreach ($product->get('images') as $key => $value) {
+
 					?>
-					<div class="img-wrap"><?php echo wp_get_attachment_image( $value['attachment_id'], 'full' ); ?></div>
+					<div class="img-wrap">
+						<?php //echo wp_get_attachment_image( $value['attachment_id'], 'full' ); ?>
+						<img class="owl-lazy" data-src="<?=esc_url(wp_get_attachment_url($value['attachment_id']))?>">
+					</div>
 					<?php
 				}
 			}

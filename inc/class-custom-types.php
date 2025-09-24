@@ -3,6 +3,36 @@ namespace Nha88;
 
 class Custom_Types {
 
+	public static function product_front_page_template($template) {
+		global $post;
+		if (is_front_page()) {
+			if ($post && $post->post_type === 'product') {
+				return locate_template("single-product.php");
+			}
+		}
+
+		return $template;
+	}
+
+	public static function pre_get_posts($query) {
+		if ( !is_admin() // Only target the front end
+		//&& $query->is_front_page() 
+		&& $query->is_main_query() // Only target the main query
+		&& 'page' === get_option( 'show_on_front' ) // Only target the static front page
+		) {
+
+			$query->set( 'post_type', ['page', 'product'] );
+		}
+	}
+
+	public static function wp_dropdown_pages_args($args) {
+		global $pagenow;
+		if(is_admin() && 'options-reading.php'==$pagenow) {
+			$args['post_type'] = ['page', 'product'];
+		}
+		return $args;
+	}
+
 	public static function hide_tags_from_quick_edit($show_in_quick_edit, $taxonomy_name, $post_type) {
 
 		if($taxonomy_name=='customer' && $post_type=='product') {
@@ -48,7 +78,7 @@ class Custom_Types {
 			'show_in_menu'        => true,
 			'show_in_admin_bar'   => false,
 			//'menu_position'       => 5,
-			'menu_icon'           => 'dashicons-admin-post',
+			'menu_icon'           => 'dashicons-media-text',
 			'show_in_nav_menus'   => false,
 			'publicly_queryable'  => false, // ẩn bài viết ở front-end
 			'exclude_from_search' => true, // loại khỏi kết quả tìm kiếm
@@ -66,18 +96,63 @@ class Custom_Types {
 		register_post_type( 'content_builder', $args );
 
 		$labels = array(
-			'name'               => 'Sản phẩm',
-			'singular_name'      => 'Sản phẩm',
-			'add_new'            => 'Thêm mới Sản phẩm',
-			'add_new_item'       => 'Thêm mới Sản phẩm',
-			'edit_item'          => 'Sửa Sản phẩm',
-			'new_item'           => 'Sản phẩm mới',
-			'view_item'          => 'Xem Sản phẩm',
-			'search_items'       => 'Tìm Sản phẩm',
-			'not_found'          => 'Không có Sản phẩm nào',
-			'not_found_in_trash' => 'Không có Sản phẩm nào trong Thùng rác',
-			'parent_item_colon'  => 'Sản phẩm cha:',
-			'menu_name'          => 'Sản phẩm',
+			'name'               => 'Hồ sơ bản vẽ',
+			'singular_name'      => 'Hồ sơ bản vẽ',
+			'add_new'            => 'Thêm mới Hồ sơ bản vẽ',
+			'add_new_item'       => 'Thêm mới Hồ sơ bản vẽ',
+			'edit_item'          => 'Sửa Hồ sơ bản vẽ',
+			'new_item'           => 'Hồ sơ bản vẽ mới',
+			'view_item'          => 'Xem Hồ sơ bản vẽ',
+			'search_items'       => 'Tìm Hồ sơ bản vẽ',
+			'not_found'          => 'Không có Hồ sơ bản vẽ nào',
+			'not_found_in_trash' => 'Không có Hồ sơ bản vẽ nào trong Thùng rác',
+			'parent_item_colon'  => 'Hồ sơ bản vẽ cha:',
+			'menu_name'          => 'Hồ sơ bản vẽ',
+		);
+	
+		$args = array(
+			'labels'              => $labels,
+			'hierarchical'        => false,
+			//'description'         => 'description',
+			//'taxonomies'          => array(),
+			'public'              => true,
+			'show_ui'             => true,
+			'show_in_menu'        => true,
+			'show_in_admin_bar'   => true,
+			//'menu_position'       => 5,
+			'menu_icon'           => 'dashicons-book',
+			'show_in_nav_menus'   => true,
+			'publicly_queryable'  => true, // ẩn bài viết ở front-end
+			'exclude_from_search' => false, // loại khỏi kết quả tìm kiếm
+			'has_archive'         => false,
+			'query_var'           => true,
+			'can_export'          => true,
+			'rewrite'             => ['slug' => 'ho-so'],
+			'capability_type'     => 'post',
+			'supports'            => array(
+				'title',
+				'editor',
+				'thumbnail',
+				//'page-attributes',
+			),
+		);
+	
+		register_post_type( 'product', $args );
+
+		// product order
+		$labels = array(
+			'name'               => 'Đơn hàng',
+			'singular_name'      => 'Đơn hàng',
+			'add_new'            => 'Thêm mới Đơn hàng',
+			'add_new_item'       => 'Thêm mới Đơn hàng',
+			'edit_item'          => 'Sửa Đơn hàng',
+			'new_item'           => 'Đơn hàng mới',
+			'view_item'          => 'Xem Đơn hàng',
+			'search_items'       => 'Tìm Đơn hàng',
+			'not_found'          => 'Không có Đơn hàng nào',
+			'not_found_in_trash' => 'Không có Đơn hàng nào trong Thùng rác',
+			'parent_item_colon'  => 'Đơn hàng cha:',
+			'menu_name'          => 'Đơn hàng',
 		);
 	
 		$args = array(
@@ -88,61 +163,48 @@ class Custom_Types {
 			'public'              => false,
 			'show_ui'             => true,
 			'show_in_menu'        => true,
-			'show_in_admin_bar'   => true,
-			//'menu_position'       => 5,
-			'menu_icon'           => 'dashicons-admin-post',
+			'show_in_admin_bar'   => false,
+			//'menu_position'       => 22,
+			'menu_icon'           => 'dashicons-cart',
 			'show_in_nav_menus'   => false,
 			'publicly_queryable'  => false, // ẩn bài viết ở front-end
-			'exclude_from_search' => false, // loại khỏi kết quả tìm kiếm
-			'has_archive'         => true,
-			'query_var'           => true,
+			'exclude_from_search' => true, // loại khỏi kết quả tìm kiếm
+			'has_archive'         => false,
+			'query_var'           => false,
 			'can_export'          => true,
 			'rewrite'             => false,
 			'capability_type'     => 'post',
+			'map_meta_cap'     => true,
 			'supports'            => array(
 				'title',
 				//'editor',
+				//'author',
 				//'thumbnail',
+				//'excerpt',
+				//'custom-fields',
+				//'trackbacks',
+				//'comments',
+				// 'revisions',
+				// 'page-attributes',
+				//'post-formats',
 			),
 		);
 	
-		register_post_type( 'product', $args );
-
-		$labels = array(
-			'name'               => 'Giao dịch',
-			'singular_name'      => 'Giao dịch',
-			'menu_name'          => 'Giao dịch',
-			'all_items'          => 'Tất cả giao dịch',
-			'view_item'          => 'Xem giao dịch',
-			'add_new_item'       => 'Thêm giao dịch mới',
-			'edit_item'          => 'Chỉnh sửa giao dịch',
-		);
-		$args = array(
-			'labels'             => $labels,
-			'public'             => false,    // Ẩn khỏi front-end, chỉ quản trị.
-			'show_ui'            => true,     // Hiển thị trong admin.
-			'supports'           => array(
-				'title',
-				'excerpt',
-				//'thumbnail'
-			), // Bạn có thể thêm các trường khác nếu cần.
-			'menu_icon'          => 'dashicons-money-alt',
-		);
-		register_post_type( 'purchase', $args );
+		register_post_type( 'product_order', $args );
 	}
 
 	public static function _theme_action_register_taxonomy() {
 		// Add new taxonomy, make it hierarchical (like categories)
 		$labels = array(
-			'name'              => 'Chuyên mục',
-			'singular_name'     => 'Chuyên mục',
-			'search_items'      => 'Tìm Chuyên mục',
-			'all_items'         => 'Tất cả Chuyên mục',
-			'edit_item'         => 'Sửa Chuyên mục',
-			'update_item'       => 'Cập nhật Chuyên mục',
-			'add_new_item'      => 'Thêm Chuyên mục mới',
-			'new_item_name'     => 'Chuyên mục mới',
-			'menu_name'         => 'Chuyên mục',
+			'name'              => 'Danh mục',
+			'singular_name'     => 'Danh mục',
+			'search_items'      => 'Tìm Danh mục',
+			'all_items'         => 'Tất cả Danh mục',
+			'edit_item'         => 'Sửa Danh mục',
+			'update_item'       => 'Cập nhật Danh mục',
+			'add_new_item'      => 'Thêm Danh mục mới',
+			'new_item_name'     => 'Danh mục mới',
+			'menu_name'         => 'Danh mục',
 		);
 
 		$args = array(
@@ -150,25 +212,25 @@ class Custom_Types {
 			'labels'            => $labels,
 			'show_ui'           => true,
 			'show_admin_column' => true,
-			'query_var'         => true,
-			'rewrite'           => ['slug'=>'chuyen-muc'],
+			'query_var'         => false,
+			'rewrite'           => ['slug'=>'danh-muc'],
 			//'rewrite'           => false,
-			'public' 			=> true,
+			'public' 			=> false,
 			'show_in_nav_menus' => true,
 			'show_tagcloud' 	=> false,
 		);
 		register_taxonomy( 'product_cat', 'product', $args ); // our new 'format' taxonomy
 
 		$labels = array(
-			'name'              => 'Giá sản phẩm',
-			'singular_name'     => 'Giá sản phẩm',
-			'search_items'      => 'Tìm Giá sản phẩm',
-			'all_items'         => 'Tất cả Giá sản phẩm',
-			'edit_item'         => 'Sửa Giá sản phẩm',
-			'update_item'       => 'Cập nhật Giá sản phẩm',
-			'add_new_item'      => 'Thêm Giá sản phẩm mới',
-			'new_item_name'     => 'Giá sản phẩm mới',
-			'menu_name'         => 'Giá sản phẩm',
+			'name'              => 'Giá hồ sơ',
+			'singular_name'     => 'Giá hồ sơ',
+			'search_items'      => 'Tìm Giá hồ sơ',
+			'all_items'         => 'Tất cả Giá hồ sơ',
+			'edit_item'         => 'Sửa Giá hồ sơ',
+			'update_item'       => 'Cập nhật Giá hồ sơ',
+			'add_new_item'      => 'Thêm Giá hồ sơ mới',
+			'new_item_name'     => 'Giá hồ sơ mới',
+			'menu_name'         => 'Giá hồ sơ',
 		);
 
 		$args = array(
@@ -176,65 +238,13 @@ class Custom_Types {
 			'labels'            => $labels,
 			'show_ui'           => true,
 			'show_admin_column' => true,
-			'query_var'         => true,
-			//'rewrite'           => ['slug'=>'danh-muc'],
+			'query_var'         => false,
 			'rewrite'           => false,
 			'public' 			=> false,
 			'show_in_nav_menus' => false,
 			'show_tagcloud' 	=> false,
 		);
-		// register_taxonomy( 'product_price', 'product', $args ); // our new 'format' taxonomy
-
-		$labels = array(
-			'name'              => 'Định dạng file',
-			'singular_name'     => 'Định dạng file',
-			'search_items'      => 'Tìm Định dạng file',
-			'all_items'         => 'Tất cả Định dạng file',
-			'edit_item'         => 'Sửa Định dạng file',
-			'update_item'       => 'Cập nhật Định dạng file',
-			'add_new_item'      => 'Thêm Định dạng file mới',
-			'new_item_name'     => 'Định dạng file mới',
-			'menu_name'         => 'Định dạng file',
-		);
-
-		$args = array(
-			'hierarchical'      => true,
-			'labels'            => $labels,
-			'show_ui'           => true,
-			'show_admin_column' => true,
-			'query_var'         => true,
-			//'rewrite'           => ['slug'=>'danh-muc'],
-			'rewrite'           => false,
-			'public' 			=> false,
-			'show_in_nav_menus' => false,
-			'show_tagcloud' 	=> false,
-		);
-		register_taxonomy( 'product_file_type', 'product', $args ); // our new 'format' taxonomy
-
-		$labels = array(
-			'name'              => 'Khách hàng',
-			'singular_name'     => 'Khách hàng',
-			'search_items'      => 'Tìm Khách hàng',
-			'all_items'         => 'Tất cả Khách hàng',
-			'edit_item'         => 'Sửa Khách hàng',
-			'update_item'       => 'Cập nhật Khách hàng',
-			'add_new_item'      => 'Thêm Khách hàng mới',
-			'new_item_name'     => 'Khách hàng mới',
-			'menu_name'         => 'Khách hàng',
-		);
-
-		$args = array(
-			'hierarchical'      => true,
-			'labels'            => $labels,
-			'show_ui'           => true,
-			'show_admin_column' => false,
-			'query_var'         => true,
-			'rewrite'           => false,
-			'public' 			=> false,
-			'show_in_nav_menus' => false,
-			'show_tagcloud' 	=> false,
-		);
-		register_taxonomy( 'customer', 'product', $args );
+		register_taxonomy( 'product_price', 'product', $args );
 	}
 
 	public static function _theme_action_change_post_labels() {
@@ -277,37 +287,32 @@ class Custom_Types {
 			$wp_taxonomies['category']->labels->menu_name = 'Chuyên mục';
 			$wp_taxonomies['category']->labels->name_admin_bar = 'Chuyên mục';
 			*/
-			$wp_taxonomies['category']->public = false;
-			$wp_taxonomies['category']->show_ui = false;
-			$wp_taxonomies['category']->show_in_nav_menus = false;
-			$wp_taxonomies['category']->rewrite = false;
+			// $wp_taxonomies['category']->public = false;
+			// $wp_taxonomies['category']->show_ui = false;
+			// $wp_taxonomies['category']->show_in_nav_menus = false;
+			// $wp_taxonomies['category']->rewrite = false;
 		}
 
 		if( isset($wp_taxonomies['post_tag']) ) {
-			$wp_taxonomies['post_tag']->public = false;
-			$wp_taxonomies['post_tag']->show_ui = false;
-			$wp_taxonomies['post_tag']->show_in_nav_menus = false;
-			$wp_taxonomies['post_tag']->rewrite = false;
+			// $wp_taxonomies['post_tag']->public = false;
+			// $wp_taxonomies['post_tag']->show_ui = false;
+			// $wp_taxonomies['post_tag']->show_in_nav_menus = false;
+			// $wp_taxonomies['post_tag']->rewrite = false;
 		}
 	}
 
 	public static function _admin_action_rename_post_menu() {
 		global $menu, $submenu;
 
-		if ( isset( $menu[5] ) ) {
-			unset($menu[5]);
-		}
-
-		if ( isset( $submenu['edit.php'] ) ) {
-			unset($submenu['edit.php']);
-		}
+		remove_menu_page( 'edit-comments.php' ); // ẩn menu Comments
+		remove_menu_page( 'edit.php' ); // ẩn menu Blog posts
+		//remove_menu_page( 'fw-extensions' ); // ẩn menu Unyson
+		remove_menu_page( 'separator1' );
 	}
 
 	public static function _setup_loop_custom_type($post) {
 		global $product;
-
 		$product = \Nha88\Product::get_instance($post->ID);
-
 	}
 
 	public static function _setup_term_default_sort($pieces, $taxonomies, $args) {

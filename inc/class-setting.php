@@ -35,16 +35,22 @@ final class Setting {
 		$this->recaptcha_keys = ['sitekey'=>$sitekey,'secretkey'=>$secretkey, 'ctf7'=>$ctf7_has_recaptcha];
 	}
 
+	public static function request_type() {
+		return [
+			'order' => 'Đặt mua hồ sơ',
+			//'vfp' => 'Xem mặt bằng'
+		];
+	}
+
 	public function cf_captcha_verify($token) {
 		// Get Turnstile Keys from Settings
-		$key = sanitize_text_field(fw_get_db_settings_option('cf_turnstile_key'));
-		$secret = sanitize_text_field(fw_get_db_settings_option('cf_turnstile_secret'));
+		$captcha = self::get_turnstile_keys();
 
-		if ($key && $secret) {
+		if ($captcha['sitekey'] && $captcha['secretkey']) {
 
 			$headers = array(
 				'body' => [
-					'secret' => $secret,
+					'secret' => $captcha['secretkey'],
 					'response' => $token
 				]
 			);
@@ -54,15 +60,54 @@ final class Setting {
 
 			//wp_mail( 'qqngoc2988@gmail.com', $_SERVER['HTTP_HOST'].' cf captcha verify', json_encode( $response ), ['Content-Type: text/html; charset=UTF-8'] );
 
-			debug_log($response);
+			//debug_log($response);
 
 			if($response->success) {
 				return true;
 			}
+		} else {
+			return true;
 		}
 
 		return false;
 	}
+
+	public static function has_turnstile() {
+        $turnstile_keys = self::get_turnstile_keys();
+
+        if ($turnstile_keys['sitekey']!='' && $turnstile_keys['secretkey']!='') {
+            return $turnstile_keys;
+        }
+
+        return false;
+    }
+
+	public static function get_turnstile_keys() {
+        if(!function_exists('is_plugin_active')) {
+            include_once ABSPATH . 'wp-admin/includes/plugin.php';
+        }
+
+        $sitekey = '';
+        $secretkey = '';
+        $ctf7_has_turnstile = false;
+
+        if(is_plugin_active( 'contact-form-7/wp-contact-form-7.php' )) {
+            $ctf7_turnstile = \WPCF7_Turnstile::get_instance();
+
+            if($ctf7_turnstile->is_active()) {
+                $sitekey = $ctf7_turnstile->get_sitekey();
+                $secretkey = $ctf7_turnstile->get_secret($sitekey);
+                $ctf7_has_turnstile = true;
+            }
+        }
+
+        if($sitekey=='' || $secretkey=='') {
+            $sitekey = fw_get_db_settings_option('cf_turnstile_key');
+            $secretkey = fw_get_db_settings_option('cf_turnstile_secret');
+        }
+
+        return ['sitekey'=>$sitekey,'secretkey'=>$secretkey, 'ctf7'=>$ctf7_has_turnstile];
+    }
 
 	public function recaptcha_verify($token, $score=0.5) {
 		$check_captcha = wp_remote_post(

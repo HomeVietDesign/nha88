@@ -10,6 +10,27 @@ function debug_log($var) {
 	error_log(print_r($var,true));
 }
 
+function get_user_agent() {
+	if ( isset( $_SERVER['HTTP_USER_AGENT'] ) ) {
+		return sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) );
+	}
+	return '';
+}
+
+function get_user_ip_address() {
+	foreach ( array( 'HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR' ) as $key ) {
+		if ( array_key_exists( $key, $_SERVER ) ) {
+			foreach ( explode( ',', sanitize_text_field( $_SERVER[ $key ] ) ) as $ip ) {
+				$ip = trim( $ip );
+				if ( false !== filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) ) {
+					return $ip;
+				}
+			}
+		}
+	}
+	return '';
+}
+
 function has_role($role, $user=null) {
 	if($user==null) $user = wp_get_current_user();
 	if($user instanceof WP_User) {

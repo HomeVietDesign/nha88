@@ -8,10 +8,5 @@
  */
 
 $options = array(
-	'qrbank' => array(
-		'type'  => 'upload',
-		'value' => '',
-		'label' => 'Ảnh QR',
-		'images_only' => true
-	),
+	
 );

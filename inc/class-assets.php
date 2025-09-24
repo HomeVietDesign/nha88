@@ -20,22 +20,6 @@ class Assets {
 		wp_enqueue_style( 'nha88', THEME_URI.'/assets/css/main.css', $deps, date('YmdHis', filemtime(THEME_DIR . '/assets/css/main.css')) );
 	}
 
-	public static function recaptcha_script() {
-		global $theme_setting;
-		
-		if(!$theme_setting->recaptcha_keys['ctf7'] && $theme_setting->recaptcha_keys['sitekey']!='' && !wp_script_is('google-recaptcha', 'registered')) {
-			wp_enqueue_script( 'google-recaptcha',
-				add_query_arg(
-					[ 'render' => $theme_setting->recaptcha_keys['sitekey'] ],
-					'https://www.google.com/recaptcha/api.js'
-				),
-				[],
-				'3.0',
-				true
-			);
-		}
-	}
-
 	public static function enqueue_scripts() {
 		global $theme_setting;
 		// wp_scripts()->add_data( 'jquery', 'group', 1 );
@@ -59,7 +43,8 @@ class Assets {
 			'jquery',
 			'bootstrap',
 			'photoswipe-lightbox',
-			//'masonry',
+			'imagesloaded',
+			'masonry',
 			'owlcarousel',
 			//'lodash',
 		];
@@ -74,8 +59,7 @@ class Assets {
 			'popup_content_timeout'=>absint($theme_setting->get('popup_content_timeout')), 
 			'is_user_logged_in' => (is_user_logged_in())?1:0,
 			'preview' => (isset($_GET['preview']))?1:0,
-			'purchase_popup_title' => fw_get_db_settings_option('purchase_popup_title', 'MUA SẢN PHẨM'),
-			'purchase_combo_popup_title' => fw_get_db_settings_option('purchase_combo_popup_title', 'MUA COMBO SẢN PHẨM'),
+			
 		];
 
 		wp_localize_script( 'jquery', 'theme', $data );
@@ -99,6 +83,11 @@ class Assets {
 			function isValidUrl(urlString) {
 				let httpRegex = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/;
 				return httpRegex.test(urlString);
+			}
+
+			function isValidPhoneNumber(p) {
+				const patt = /^(\+?\d{1,3}[-.\s]?)?(\(?\d{3}\)?[-.\s]?)?\d{3}[-.\s]?\d{4}$/;
+				return patt.test(p);
 			}
 
 			function is_mobile() {
@@ -175,6 +164,11 @@ class Assets {
 				}
 			}
 
+			function getParam(name) {
+				let params = new URLSearchParams(window.location.search);
+				return params.get(name);
+			}
+
 			let ref = getCookie('_ref');
 			if(ref=='') {
 				ref = window.btoa((document.referrer=='')?window.location.href:document.referrer);
@@ -186,6 +180,8 @@ class Assets {
 				}
 				setCookie('_ref', ref, 1);
 			}
+
+
 		</script>
 		<?php
 		return trim( preg_replace( '#<script[^>]*>(.*)</script>#is', '$1', ob_get_clean() ) );
